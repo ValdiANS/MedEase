@@ -44,7 +44,9 @@ import com.myapplication.medease.ui.theme.montserratFamily
 
 @Composable
 fun DetailMedicineScreen(
+    medicineId: String,
     onNavigateBack: () -> Unit,
+    onSetSchedule: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Dummy
@@ -271,7 +273,11 @@ fun DetailMedicineContent(
 @Composable
 fun DetailMedicineScreenPreview() {
     MedEaseTheme {
-        DetailMedicineScreen(onNavigateBack = {})
+        DetailMedicineScreen(
+            medicineId = "123",
+            onNavigateBack = {},
+            onSetSchedule = {}
+        )
     }
 }
 
