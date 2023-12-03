@@ -5,6 +5,10 @@
     <string name="no_data">There is no data</string>
     <string name="welcome_home">Did you take your medicine on time?</string>
     <string name="list_of_medicine">List of Medicine</string>
-    <string name="resent_search">Resent Search</string>
+    <string name="recent_search">Recent Search</string>
     <string name="recent_medicine">Recent Medicine</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_schedule">Schedule</string>
+    <string name="menu_profile">Profile</string>
+    <string name="medicine_id">medicineId</string>
 </resources>
