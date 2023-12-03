@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -44,6 +43,7 @@ import com.myapplication.medease.ui.theme.MedEaseTheme
 
 @Composable
 fun HomeScreen(
+    onDetailClick: (String) -> Unit,
 ) {
     HomeContent(
         username = "Bedul",
@@ -51,7 +51,7 @@ fun HomeScreen(
         listMedicine = dummyMedicineItems,
         onQueryChanged = {},
         onSearch = {},
-        navigateToDetail = {},
+        navigateToDetail = onDetailClick,
         navigateToScan = {}
     )
 }
@@ -65,7 +65,7 @@ fun HomeContent(
     modifier: Modifier = Modifier,
     onQueryChanged: (String) -> Unit,
     onSearch: (String) -> Unit,
-    navigateToDetail: () -> Unit,
+    navigateToDetail: (String) -> Unit,
     navigateToScan: () -> Unit
 ) {
     Scaffold(
@@ -82,7 +82,7 @@ fun HomeContent(
             HomeSection(title = stringResource(R.string.list_of_medicine), uiState = UiState.Success(listMedicine)) {
                 MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
             }
-            HomeSection(title = stringResource(R.string.resent_search), uiState = UiState.Loading) {
+            HomeSection(title = stringResource(R.string.recent_search), uiState = UiState.Loading) {
                 MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
             }
             HomeSection(title = stringResource(R.string.recent_medicine), uiState = UiState.Error("no data")) {
@@ -126,7 +126,7 @@ fun HomeSection(
 fun MedicineRow(
     listMedicine: List<MedicineItems>,
     modifier: Modifier = Modifier,
-    navigateToDetail: () -> Unit
+    navigateToDetail: (String) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -138,7 +138,9 @@ fun MedicineRow(
                 types = medicine.types,
                 doses = medicine.doses,
                 description = medicine.description,
-                onClick = navigateToDetail
+                onClick = {
+                    navigateToDetail(medicine.id)
+                }
             )
         }
     }
