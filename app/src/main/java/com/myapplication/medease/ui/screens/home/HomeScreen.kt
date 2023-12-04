@@ -44,6 +44,7 @@ import com.myapplication.medease.ui.theme.MedEaseTheme
 @Composable
 fun HomeScreen(
     onDetailClick: (String) -> Unit,
+    onNavigateToCamera: () -> Unit,
 ) {
     HomeContent(
         username = "Bedul",
@@ -52,7 +53,7 @@ fun HomeScreen(
         onQueryChanged = {},
         onSearch = {},
         navigateToDetail = onDetailClick,
-        navigateToScan = {}
+        navigateToScan = onNavigateToCamera
     )
 }
 
@@ -66,7 +67,7 @@ fun HomeContent(
     onQueryChanged: (String) -> Unit,
     onSearch: (String) -> Unit,
     navigateToDetail: (String) -> Unit,
-    navigateToScan: () -> Unit
+    navigateToScan: () -> Unit,
 ) {
     Scaffold(
         floatingActionButton = {
@@ -78,14 +79,25 @@ fun HomeContent(
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            Banner(username = username, query = query, onSearch = onSearch, onQueryChanged = onQueryChanged)
-            HomeSection(title = stringResource(R.string.list_of_medicine), uiState = UiState.Success(listMedicine)) {
+            Banner(
+                username = username,
+                query = query,
+                onSearch = onSearch,
+                onQueryChanged = onQueryChanged
+            )
+            HomeSection(
+                title = stringResource(R.string.list_of_medicine),
+                uiState = UiState.Success(listMedicine)
+            ) {
                 MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
             }
             HomeSection(title = stringResource(R.string.recent_search), uiState = UiState.Loading) {
                 MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
             }
-            HomeSection(title = stringResource(R.string.recent_medicine), uiState = UiState.Error("no data")) {
+            HomeSection(
+                title = stringResource(R.string.recent_medicine),
+                uiState = UiState.Error("no data")
+            ) {
                 MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
             }
         }
@@ -97,7 +109,7 @@ fun HomeSection(
     title: String,
     uiState: UiState<Any>,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Column(modifier) {
         Text(
@@ -111,7 +123,7 @@ fun HomeSection(
         Box(
             modifier = Modifier.heightIn(min = 150.dp),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             when (uiState) {
                 is UiState.Loading -> LoadingItem()
                 is UiState.Success -> content()
@@ -126,7 +138,7 @@ fun HomeSection(
 fun MedicineRow(
     listMedicine: List<MedicineItems>,
     modifier: Modifier = Modifier,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (String) -> Unit,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -152,7 +164,7 @@ fun Banner(
     query: String,
     modifier: Modifier = Modifier,
     onQueryChanged: (String) -> Unit,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
 ) {
     Column {
         Card(
@@ -212,7 +224,7 @@ fun MySearch(
     query: String,
     modifier: Modifier = Modifier,
     onQueryChanged: (String) -> Unit,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
 ) {
     SearchBar(
         query = query,
@@ -241,11 +253,11 @@ fun MySearch(
 @Composable
 fun FABCamera(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     FloatingActionButton(onClick = onClick) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_camera) ,
+            painter = painterResource(id = R.drawable.ic_camera),
             contentDescription = "Open Camera"
         )
     }

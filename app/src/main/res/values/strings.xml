@@ -11,4 +11,6 @@
     <string name="menu_schedule">Schedule</string>
     <string name="menu_profile">Profile</string>
     <string name="medicine_id">medicineId</string>
+    <string name="permission_denied_message">Please grant the permission to use the camera for scanning the medicine.</string>
+    <string name="grant_camera_permission">Grant Camera Permission</string>
 </resources>

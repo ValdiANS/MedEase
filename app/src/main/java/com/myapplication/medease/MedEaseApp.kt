@@ -22,6 +22,7 @@ import androidx.navigation.navArgument
 import com.myapplication.medease.ui.components.BottomBar
 import com.myapplication.medease.ui.navigation.NavigationItem
 import com.myapplication.medease.ui.navigation.Screen
+import com.myapplication.medease.ui.screens.camera.CameraScreen
 import com.myapplication.medease.ui.screens.detail_medicine.DetailMedicineScreen
 import com.myapplication.medease.ui.screens.home.HomeScreen
 import com.myapplication.medease.ui.screens.profile.ProfileScreen
@@ -36,6 +37,15 @@ fun MedEaseApp(
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    val checkIfRouteShowBottomNav: (String) -> Boolean = { route: String ->
+        when (route) {
+            Screen.Home.route -> true
+            Screen.Schedule.route -> true
+            Screen.Profile.route -> true
+            else -> false
+        }
+    }
 
     val navigationItems = listOf(
         NavigationItem(
@@ -57,7 +67,7 @@ fun MedEaseApp(
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != Screen.DetailMedicine.route) {
+            if (checkIfRouteShowBottomNav(currentRoute.toString())) {
                 BottomBar(
                     navigationItems = navigationItems,
                     navController = navController
@@ -75,6 +85,9 @@ fun MedEaseApp(
                 HomeScreen(
                     onDetailClick = { medicineId: String ->
                         navController.navigate(Screen.DetailMedicine.createRoute(medicineId))
+                    },
+                    onNavigateToCamera = {
+                        navController.navigate(Screen.Camera.route)
                     }
                 )
             }
@@ -104,6 +117,17 @@ fun MedEaseApp(
                     },
                     onSetSchedule = {
                         // TODO("Set schedule of this medicine")
+                    }
+                )
+            }
+
+            composable(Screen.Camera.route) {
+                CameraScreen(
+                    onPermissionDenied = {
+                        navController.navigateUp()
+                    },
+                    onNavigateBack = {
+                        navController.navigateUp()
                     }
                 )
             }
