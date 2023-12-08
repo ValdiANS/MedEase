@@ -160,20 +160,6 @@ fun DetailMedicineContent(
                                 textAlign = TextAlign.Center,
                             )
                         }
-
-//                        Spacer(Modifier.size(10.dp))
-//
-//                        Text(
-//                            text = medicineDosage,
-//                            style = TextStyle(
-//                                fontSize = 10.sp,
-//                                fontFamily = montserratFamily,
-//                                fontWeight = FontWeight.Medium,
-//                                textAlign = TextAlign.Center,
-//                            ),
-//                            modifier = Modifier.padding(vertical = 2.dp, horizontal = 10.dp),
-//                            textAlign = TextAlign.Center,
-//                        )
                     }
 
                     Spacer(Modifier.size(28.dp))

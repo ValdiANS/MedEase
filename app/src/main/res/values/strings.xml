@@ -13,4 +13,22 @@
     <string name="medicine_id">medicineId</string>
     <string name="permission_denied_message">Please grant the permission to use the camera for scanning the medicine.</string>
     <string name="grant_camera_permission">Grant Camera Permission</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="login_description">Sign in-up to enjoy the best managing experience</string>
+    <string name="login_title">Set up your\naccount</string>
+    <string name="email_address_label">Email Address</string>
+    <string name="email_address_placeholder">Enter your email address...</string>
+    <string name="password_label">Password</string>
+    <string name="password_placeholder">Enter your password...</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="guest">Guest</string>
+    <string name="incorrect_data_error_msg">Incorrect Data!</string>
+    <string name="birthdate_label">Birthdate</string>
+    <string name="birthdate_placeholder">Enter your Birthdate...</string>
+    <string name="password_register_placeholder">Create your password...</string>
+    <string name="username_label">Username</string>
+    <string name="username_placeholder">Enter your Username...</string>
+    <string name="full_name_label">Full Name</string>
+    <string name="full_name_placeholder">Enter your Full Name...</string>
 </resources>
