@@ -31,4 +31,5 @@
     <string name="username_placeholder">Enter your Username...</string>
     <string name="full_name_label">Full Name</string>
     <string name="full_name_placeholder">Enter your Full Name...</string>
+    <string name="logout">Logout</string>
 </resources>

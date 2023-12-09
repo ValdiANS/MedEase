@@ -33,6 +33,7 @@ import com.myapplication.medease.ui.theme.MedEaseTheme
 fun MedEaseApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    onLogout: () -> Unit
 ) {
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -97,7 +98,7 @@ fun MedEaseApp(
             }
 
             composable(Screen.Profile.route) {
-                ProfileScreen()
+                ProfileScreen(onLogout = onLogout)
             }
 
             composable(
@@ -139,6 +140,8 @@ fun MedEaseApp(
 @Composable
 fun MedEaseAppPreview() {
     MedEaseTheme {
-        MedEaseApp()
+        MedEaseApp(
+            onLogout = {}
+        )
     }
 }

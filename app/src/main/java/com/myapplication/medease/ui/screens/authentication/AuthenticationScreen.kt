@@ -63,6 +63,8 @@ fun AuthenticationScreen(
     registerFormViewModel: RegisterFormViewModel = viewModel(
         factory = ViewModelFactory.getInstance(LocalContext.current)
     ),
+    onSignIn: () -> Unit,
+    onSignInAsGuest: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     var authenticationTabIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -88,6 +90,10 @@ fun AuthenticationScreen(
         * */
     }
 
+    loginFormViewModel.signIn = {
+        onSignIn()
+    }
+
     val onChangeTabIndexHandler: (Int) -> Unit = { newIndex: Int ->
         coroutineScope.launch {
             authenticationTabPagerState.animateScrollToPage(newIndex)
@@ -102,7 +108,7 @@ fun AuthenticationScreen(
         tabPagerState = authenticationTabPagerState,
         onSignUpTabClick = onSignUpTabClickHandler,
         onSignInTabClick = onSignInTabClickHandler,
-        onSignInAsGuest = onSignInAsGuestHandler,
+        onSignInAsGuest = onSignInAsGuest,
         onChangeTabIndex = onChangeTabIndexHandler,
         modifier = modifier
     )
@@ -290,6 +296,9 @@ fun AuthenticationTabRow(
 @Composable
 fun LoginScreenPreview() {
     MedEaseTheme {
-        AuthenticationScreen()
+        AuthenticationScreen(
+            onSignIn =  {},
+            onSignInAsGuest = {}
+        )
     }
 }
