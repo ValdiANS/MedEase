@@ -14,6 +14,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField("String", "BASE_URL", "\"https:\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -38,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -52,6 +55,7 @@ android {
 dependencies {
     val cameraxVersion = "1.3.0"
     val accompanistVersion = "0.32.0"
+    val ktxVersion = "2.6.2"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -74,6 +78,22 @@ dependencies {
 
     // Accompanist
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
+    //retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    //datastore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    //android ktx
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$ktxVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$ktxVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$ktxVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+
+    implementation("androidx.compose.runtime:runtime-livedata") //observeAsState
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

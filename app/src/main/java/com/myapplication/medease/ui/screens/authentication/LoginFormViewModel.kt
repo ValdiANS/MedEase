@@ -5,6 +5,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.myapplication.medease.data.local.preference.UserModel
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.utils.isEmail
 import kotlinx.coroutines.delay
@@ -36,6 +37,8 @@ class LoginFormViewModel(
 
     private val _submitErrorMsg = mutableStateOf("")
     var submitErrorMsg: State<String> = _submitErrorMsg
+
+    var signIn: (() -> Unit)? = null
 
     val submitEnabled = derivedStateOf {
         !isEmailError.value &&
@@ -94,6 +97,17 @@ class LoginFormViewModel(
             val loginResponse = login(emailValue.value, passwordValue.value)
 
             _isFormValid.value = !loginResponse
+            if (isFormValid.value) {
+                val user = UserModel(
+                    id = "askjdfhsk,abfa,sk",
+                    name = "ludeb",
+                    token = "ajdnhaklsdbnahljsfglaskhd",
+                    isLogin = true,
+                    isGuest = false
+                )
+                authenticationRepository.saveSession(user)
+                signIn?.invoke()
+            }
 
             /*
             * TODO: This is test, delete later

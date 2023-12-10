@@ -62,7 +62,7 @@ fun CustomButton(
         enabled = enabled,
         modifier = modifier.fillMaxWidth()
     ) {
-        Box(modifier = modifier) {
+        Box(modifier = Modifier) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,

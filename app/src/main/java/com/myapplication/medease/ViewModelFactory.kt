@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.ui.screens.authentication.LoginFormViewModel
 import com.myapplication.medease.ui.screens.authentication.RegisterFormViewModel
+import com.myapplication.medease.ui.screens.profile.ProfileScreenViewModel
 import com.myapplication.medease.utils.Injection
 
 @Suppress("UNCHECKED_CAST")
@@ -20,6 +21,9 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(RegisterFormViewModel::class.java) ->
                 RegisterFormViewModel(authenticationRepository) as T
+
+            modelClass.isAssignableFrom(MainViewModel::class.java) ->
+                MainViewModel(authenticationRepository) as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

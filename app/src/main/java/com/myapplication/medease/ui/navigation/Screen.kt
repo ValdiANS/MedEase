@@ -12,4 +12,7 @@ sealed class Screen(val route: String) {
     }
 
     object Camera : Screen("home/camera")
+
+    object Welcome : Screen("welcome")
+    object Authentication : Screen("welcome/authentication")
 }
