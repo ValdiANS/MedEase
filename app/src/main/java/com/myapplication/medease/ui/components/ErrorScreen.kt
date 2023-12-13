@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.myapplication.medease.R
 
 @Composable
@@ -19,4 +20,10 @@ fun ErrorScreen(
     ) {
         Text(text = stringResource(R.string.no_data))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Errorprev() {
+    ErrorScreen()
 }

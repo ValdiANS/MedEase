@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.myapplication.medease.data.local.preference.UserModel
 import com.myapplication.medease.ui.components.BottomBar
 import com.myapplication.medease.ui.navigation.NavigationItem
 import com.myapplication.medease.ui.navigation.Screen
@@ -31,6 +32,7 @@ import com.myapplication.medease.ui.theme.MedEaseTheme
 
 @Composable
 fun MedEaseApp(
+    userModel: UserModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     onLogout: () -> Unit
@@ -84,6 +86,7 @@ fun MedEaseApp(
         ) {
             composable(Screen.Home.route) {
                 HomeScreen(
+                    userModel = userModel,
                     onDetailClick = { medicineId: String ->
                         navController.navigate(Screen.DetailMedicine.createRoute(medicineId))
                     },
@@ -140,8 +143,8 @@ fun MedEaseApp(
 @Composable
 fun MedEaseAppPreview() {
     MedEaseTheme {
-        MedEaseApp(
-            onLogout = {}
-        )
+//        MedEaseApp(
+//            onLogout = {}
+//        )
     }
 }
