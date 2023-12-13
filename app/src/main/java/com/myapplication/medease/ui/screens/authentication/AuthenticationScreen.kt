@@ -19,6 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRow
@@ -27,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -72,6 +77,8 @@ fun AuthenticationScreen(
         listOf(stringResource(R.string.sign_in), stringResource(R.string.sign_up))
     var authenticationTabPagerState = rememberPagerState { authenticationTabTitles.size }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val onSignInTabClickHandler: () -> Unit = {
         coroutineScope.launch {
             authenticationTabPagerState.animateScrollToPage(0)
@@ -84,34 +91,41 @@ fun AuthenticationScreen(
         }
     }
 
-    val onSignInAsGuestHandler = {
-        /*
-        * TODO: sign in as guest
-        * */
-    }
-
-    loginFormViewModel.signIn = {
-        onSignIn()
-    }
-
     val onChangeTabIndexHandler: (Int) -> Unit = { newIndex: Int ->
         coroutineScope.launch {
             authenticationTabPagerState.animateScrollToPage(newIndex)
         }
     }
 
-    AuthenticationScreenContent(
-        loginFormViewModel = loginFormViewModel,
-        registerFormViewModel = registerFormViewModel,
-        tabIndex = authenticationTabIndex,
-        tabTitles = authenticationTabTitles,
-        tabPagerState = authenticationTabPagerState,
-        onSignUpTabClick = onSignUpTabClickHandler,
-        onSignInTabClick = onSignInTabClickHandler,
-        onSignInAsGuest = onSignInAsGuest,
-        onChangeTabIndex = onChangeTabIndexHandler,
-        modifier = modifier
-    )
+    val onShowSnackbarHandler: (String) -> Unit = { message: String ->
+        coroutineScope.launch {
+            snackbarHostState.showSnackbar(
+                message = message,
+                withDismissAction = true,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+    ) { innerPadding ->
+        AuthenticationScreenContent(
+            loginFormViewModel = loginFormViewModel,
+            registerFormViewModel = registerFormViewModel,
+            tabIndex = authenticationTabIndex,
+            tabTitles = authenticationTabTitles,
+            tabPagerState = authenticationTabPagerState,
+            onSignUpTabClick = onSignUpTabClickHandler,
+            onSignInTabClick = onSignInTabClickHandler,
+            onSignInAsGuest = onSignInAsGuest,
+            onChangeTabIndex = onChangeTabIndexHandler,
+            onShowSnackbar = onShowSnackbarHandler,
+            modifier = modifier.padding(innerPadding)
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -126,6 +140,7 @@ fun AuthenticationScreenContent(
     onSignInTabClick: () -> Unit,
     onSignInAsGuest: () -> Unit,
     onChangeTabIndex: (Int) -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -137,7 +152,11 @@ fun AuthenticationScreenContent(
         Spacer(Modifier.size(60.dp))
 
         AuthenticationHeader(
-            title = stringResource(R.string.login_title),
+            title = when (tabPagerState.currentPage) {
+                0 -> stringResource(R.string.login_title)
+                1 -> stringResource(R.string.register_title)
+                else -> stringResource(R.string.login_title)
+            },
             description = stringResource(R.string.login_description),
         )
 
@@ -191,7 +210,8 @@ fun AuthenticationScreenContent(
                         stringResource(R.string.sign_up) -> {
                             RegisterForm(
                                 viewModel = registerFormViewModel,
-                                onSignInClick = onSignInTabClick
+                                onSignInClick = onSignInTabClick,
+                                onShowSnackbar = onShowSnackbar,
                             )
                         }
                     }
@@ -294,10 +314,10 @@ fun AuthenticationTabRow(
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
+fun AuthenticationScreenPreview() {
     MedEaseTheme {
         AuthenticationScreen(
-            onSignIn =  {},
+            onSignIn = {},
             onSignInAsGuest = {}
         )
     }

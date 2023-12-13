@@ -5,10 +5,14 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.myapplication.medease.data.remote.response.LoginResponse
+import com.myapplication.medease.data.remote.response.RegisterResponse
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.utils.isEmail
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class RegisterFormViewModel(
     private val authenticationRepository: AuthenticationRepository,
@@ -80,7 +84,7 @@ class RegisterFormViewModel(
     }
 
     fun onFullNameChangeHandler(newInput: String) {
-        _fullNameValue.value = newInput.trim()
+        _fullNameValue.value = newInput.trimStart()
 
         _isFullNameError.value = when {
             newInput.isEmpty() -> false
@@ -158,32 +162,43 @@ class RegisterFormViewModel(
         _isOpenDatePickerDialog.value = false
     }
 
-    fun onSubmitHandler() {
+    fun onSubmitHandler(onSuccessSignUp: () -> Unit) {
         viewModelScope.launch {
             _isSubmitting.value = true
             _submitErrorMsg.value = ""
             _isFormValid.value = true
 
-            /*
-             * TODO: This is test, delete later
-             * */
-            delay(500)
+            try {
+                val registerResponse = register(
+                    fullName = fullNameValue.value,
+                    username = usernameValue.value,
+                    email = emailValue.value,
+                    password = passwordValue.value,
+                    birthdate = birthdateValue.value,
+                )
 
-            val registerResponse = register(
-                fullName = fullNameValue.value,
-                username = usernameValue.value,
-                email = emailValue.value,
-                password = passwordValue.value,
-                birthdate = birthdateValue.value,
-            )
+                when (registerResponse.code) {
+                    201 -> {
+                        // Reset form
+                        _fullNameValue.value = ""
+                        _usernameValue.value = ""
+                        _emailValue.value = ""
+                        _passwordValue.value = ""
+                        _birthdateValue.value = ""
 
-            _isFormValid.value = !registerResponse
+                        onSuccessSignUp()
+                    }
+                }
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, RegisterResponse::class.java)
 
-            /*
-            * TODO: This is test, delete later
-            * */
-            if (!isFormValid.value) {
-                _submitErrorMsg.value = "Email is already used!"
+                when (errorResponse.code) {
+                    500 -> {
+                        _isFormValid.value = false
+                        _submitErrorMsg.value = "Username or Email is used!"
+                    }
+                }
             }
 
             _isSubmitting.value = false
@@ -196,15 +211,13 @@ class RegisterFormViewModel(
         email: String,
         password: String,
         birthdate: String,
-    ): Boolean {
-        val response =  authenticationRepository.register(
+    ): RegisterResponse {
+        return authenticationRepository.register(
             fullName = fullName,
             username = username,
             email = email,
             password = password,
             birthdate = birthdate,
         )
-
-        return response
     }
 }

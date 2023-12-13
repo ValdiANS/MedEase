@@ -5,11 +5,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.myapplication.medease.data.local.preference.UserModel
+import com.google.gson.Gson
+import com.myapplication.medease.data.remote.response.LoginResponse
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.utils.isEmail
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class LoginFormViewModel(
     private val authenticationRepository: AuthenticationRepository,
@@ -37,8 +38,6 @@ class LoginFormViewModel(
 
     private val _submitErrorMsg = mutableStateOf("")
     var submitErrorMsg: State<String> = _submitErrorMsg
-
-    var signIn: (() -> Unit)? = null
 
     val submitEnabled = derivedStateOf {
         !isEmailError.value &&
@@ -79,53 +78,35 @@ class LoginFormViewModel(
         _isPasswordVisible.value = !_isPasswordVisible.value
     }
 
-    fun onSubmitHandler() {
-        /*
-        * TODO: email and password validation, then send data to the server
-        * */
-
+    fun onSubmitHandler(onSuccessSignIn: () -> Unit) {
         viewModelScope.launch {
             _isSubmitting.value = true
             _submitErrorMsg.value = ""
             _isFormValid.value = true
 
-            /*
-             * TODO: This is test, delete later
-             * */
-            delay(500)
+            try {
+                val loginResponse = login(emailValue.value, passwordValue.value)
 
-            val loginResponse = login(emailValue.value, passwordValue.value)
+                if (loginResponse.code == 200) {
+                    onSuccessSignIn()
+                }
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, LoginResponse::class.java)
 
-            _isFormValid.value = !loginResponse
-            if (isFormValid.value) {
-                val user = UserModel(
-                    id = "askjdfhsk,abfa,sk",
-                    name = "ludeb",
-                    token = "ajdnhaklsdbnahljsfglaskhd",
-                    isLogin = true,
-                    isGuest = false
-                )
-                authenticationRepository.saveSession(user)
-                signIn?.invoke()
+                when (errorResponse.code) {
+                    401 -> {
+                        _isFormValid.value = false
+                        _submitErrorMsg.value = errorResponse.message
+                    }
+                }
             }
-
-            /*
-            * TODO: This is test, delete later
-            * */
-            if (!isFormValid.value) {
-                _submitErrorMsg.value = "Invalid Account!"
-            }
-
-
-            /**/
 
             _isSubmitting.value = false
         }
     }
 
-    private suspend fun login(email: String, password: String): Boolean {
-        val response = authenticationRepository.login(email, password)
-
-        return response
+    private suspend fun login(email: String, password: String): LoginResponse {
+        return authenticationRepository.login(email, password)
     }
 }

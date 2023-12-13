@@ -32,5 +32,10 @@
     <string name="full_name_label">Full Name</string>
     <string name="full_name_placeholder">Enter your Full Name...</string>
     <string name="logout">Logout</string>
+    <string name="register_title">Create your\naccount</string>
+    <string name="registration_success_msg">Registration Successful!</string>
+    <string name="schedule_screen_title">Make a Schedule</string>
+    <string name="medicine_name_label">Medicine Name</string>
+    <string name="medicine_name_placeholder">Enter your medicine name...</string>
     <string name="doses">%d mg</string>
 </resources>

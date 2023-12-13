@@ -10,7 +10,9 @@ import com.myapplication.medease.data.repository.MedicineRepository
 object Injection {
     fun provideAuthenticationRepository(context: Context): AuthenticationRepository {
         val userPreferences = UserPreferences.getInstance(context.dataStore)
-        return AuthenticationRepository.getInstance(userPreferences)
+        val apiService = ApiConfig.getApiService()
+
+        return AuthenticationRepository.getInstance(userPreferences, apiService)
     }
 
     fun provideMedicineRepository(context: Context): MedicineRepository {

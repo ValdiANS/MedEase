@@ -52,6 +52,7 @@ fun CustomOutlinedTextField(
     placeholderText: String = "",
     isError: Boolean = false,
     maxLines: Int = 1,
+    borderColor: Color = Color.White,
     keyboardType: KeyboardType = KeyboardType.Text,
     @DrawableRes leadingIconDrawableId: Int? = null,
     @DrawableRes trailingIconDrawableId: Int? = null,
@@ -61,7 +62,7 @@ fun CustomOutlinedTextField(
     val placeholder: @Composable (() -> Unit)? = {
         Text(
             text = placeholderText,
-            color = Color.White,
+            color = borderColor,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = montserratFamily
@@ -95,36 +96,36 @@ fun CustomOutlinedTextField(
     }
 
     val colors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = Color.White,
-        unfocusedBorderColor = Color.White,
+        focusedBorderColor = borderColor,
+        unfocusedBorderColor = borderColor,
         errorBorderColor = ColorError,
 
-        focusedLabelColor = Color.White,
-        unfocusedLabelColor = Color.White,
+        focusedLabelColor = borderColor,
+        unfocusedLabelColor = borderColor,
         errorLabelColor = ColorError40,
 
-        focusedLeadingIconColor = Color.White,
-        unfocusedLeadingIconColor = Color.White,
+        focusedLeadingIconColor = borderColor,
+        unfocusedLeadingIconColor = borderColor,
         errorLeadingIconColor = ColorError40,
 
-        focusedTrailingIconColor = Color.White,
-        unfocusedTrailingIconColor = Color.White,
+        focusedTrailingIconColor = borderColor,
+        unfocusedTrailingIconColor = borderColor,
         errorTrailingIconColor = ColorError40,
 
-        focusedTextColor = Color.White,
-        unfocusedTextColor = Color.White,
+        focusedTextColor = borderColor,
+        unfocusedTextColor = borderColor,
         errorTextColor = ColorError40,
 
         errorPlaceholderColor = ColorError,
 
-        cursorColor = Color.White,
+        cursorColor = borderColor,
         errorCursorColor = ColorError,
 
         )
 
     val labelTextColor = when {
         isError -> ColorError40
-        else -> Color.White
+        else -> borderColor
     }
 
     /*
@@ -159,7 +160,7 @@ fun CustomOutlinedTextField(
                 fontSize = 16.sp,
                 fontFamily = montserratFamily,
                 fontWeight = FontWeight.SemiBold,
-                color = if (isError) ColorError40 else Color.White,
+                color = if (isError) ColorError40 else borderColor,
             )
         )
     }
