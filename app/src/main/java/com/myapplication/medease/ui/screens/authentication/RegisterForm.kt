@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.myapplication.medease.R
 import com.myapplication.medease.data.local.preference.UserPreferences
 import com.myapplication.medease.data.local.preference.dataStore
+import com.myapplication.medease.data.remote.retrofit.ApiConfig
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.ui.components.CustomButton
 import com.myapplication.medease.ui.components.CustomOutlinedTextField
@@ -48,11 +49,13 @@ import com.myapplication.medease.ui.theme.ColorTertiary
 import com.myapplication.medease.ui.theme.MedEaseTheme
 import com.myapplication.medease.ui.theme.montserratFamily
 import com.myapplication.medease.utils.convertMillisToString
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterForm(
     viewModel: RegisterFormViewModel,
     onSignInClick: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val fullNameValue by viewModel.fullNameValue
@@ -76,6 +79,17 @@ fun RegisterForm(
     val isFormValid by viewModel.isFormValid
     val submitErrorMsg by viewModel.submitErrorMsg
     val isSubmitEnabled by viewModel.submitEnabled
+
+    val registrationSuccessMsg = stringResource(R.string.registration_success_msg)
+
+    val submitHandler = {
+        viewModel.onSubmitHandler(
+            onSuccessSignUp = {
+                onShowSnackbar(registrationSuccessMsg)
+                onSignInClick()
+            }
+        )
+    }
 
     // Birthdate Date Picker
     val datePickerState = rememberDatePickerState()
@@ -193,7 +207,7 @@ fun RegisterForm(
 
             CustomButton(
                 text = stringResource(R.string.sign_up),
-                onClick = viewModel::onSubmitHandler,
+                onClick = submitHandler,
                 isLoading = isSubmitting,
                 enabled = isSubmitEnabled
             )
@@ -261,9 +275,15 @@ fun RegisterFooter(
 fun RegisterFormPreview() {
     MedEaseTheme {
         RegisterForm(
-            viewModel = RegisterFormViewModel(AuthenticationRepository(UserPreferences.getInstance(
-                LocalContext.current.dataStore))),
-            onSignInClick = {}
+            viewModel = RegisterFormViewModel(
+                AuthenticationRepository(
+                    UserPreferences.getInstance(
+                        LocalContext.current.dataStore
+                    ), ApiConfig.getApiService()
+                )
+            ),
+            onSignInClick = {},
+            onShowSnackbar = {}
         )
     }
 }

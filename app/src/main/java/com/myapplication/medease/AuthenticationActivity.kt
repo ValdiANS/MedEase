@@ -64,11 +64,11 @@ class AuthenticationActivity : ComponentActivity() {
                     onSignInAsGuest = {
                         viewModel.saveSession(
                             UserModel(
-                                "",
-                                "",
-                                "",
-                                false,
-                                true
+                                id = "",
+                                name = "",
+                                token = "",
+                                isLogin = false,
+                                isGuest = true
                             )
                         )
                         startActivity(Intent(this@AuthenticationActivity, MainActivity::class.java))

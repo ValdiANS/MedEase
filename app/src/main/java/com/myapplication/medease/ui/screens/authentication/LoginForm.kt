@@ -1,5 +1,6 @@
 package com.myapplication.medease.ui.screens.authentication
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,9 +26,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.myapplication.medease.MainActivity
 import com.myapplication.medease.R
 import com.myapplication.medease.data.local.preference.UserPreferences
 import com.myapplication.medease.data.local.preference.dataStore
+import com.myapplication.medease.data.remote.retrofit.ApiConfig
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.ui.components.CustomButton
 import com.myapplication.medease.ui.components.CustomOutlinedTextField
@@ -35,6 +38,7 @@ import com.myapplication.medease.ui.components.ErrorCard
 import com.myapplication.medease.ui.theme.ColorNeutral
 import com.myapplication.medease.ui.theme.MedEaseTheme
 import com.myapplication.medease.ui.theme.montserratFamily
+
 @Composable
 fun LoginForm(
     viewModel: LoginFormViewModel,
@@ -42,6 +46,8 @@ fun LoginForm(
     onSignInAsGuestClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     val emailValue by viewModel.emailValue
     val passwordValue by viewModel.passwordValue
     val isEmailError by viewModel.isEmailError
@@ -51,6 +57,15 @@ fun LoginForm(
     val isFormValid by viewModel.isFormValid
     val submitErrorMsg by viewModel.submitErrorMsg
     val isSubmitEnabled by viewModel.submitEnabled
+
+    val submitHandler = {
+        viewModel.onSubmitHandler(
+            onSuccessSignIn = {
+                val mainActivityIntent = Intent(context, MainActivity::class.java)
+                context.startActivity(mainActivityIntent)
+            }
+        )
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -94,7 +109,7 @@ fun LoginForm(
 
             CustomButton(
                 text = stringResource(R.string.sign_in),
-                onClick = viewModel::onSubmitHandler,
+                onClick = submitHandler,
                 isLoading = isSubmitting,
                 enabled = isSubmitEnabled
             )
@@ -189,8 +204,13 @@ fun LoginFooter(
 fun LoginFormPreview() {
     MedEaseTheme {
         LoginForm(
-            viewModel = LoginFormViewModel(AuthenticationRepository(UserPreferences.getInstance(
-                LocalContext.current.dataStore))),
+            viewModel = LoginFormViewModel(
+                AuthenticationRepository(
+                    UserPreferences.getInstance(
+                        LocalContext.current.dataStore
+                    ), ApiConfig.getApiService()
+                )
+            ),
             onSignUpClick = {},
             onSignInAsGuestClick = {},
         )

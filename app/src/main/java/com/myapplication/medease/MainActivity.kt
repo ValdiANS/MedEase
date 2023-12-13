@@ -29,17 +29,17 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val user = viewModel.getSession().observeAsState(
                         initial = UserModel(
-                            "",
-                            "",
-                            "",
-                            false,
-                            true /*
+                            id = "",
+                            name = "",
+                            token = "",
+                            isLogin = false,
+                            isGuest = true /*
                             gatau kenapa klo initialnya false (yg mana menurut gua seharusnya false) malah ga mau munculin medeasenya pas login/guest
                             TODO dont forget delete this comment lol
                             */
                         )
                     )
-                    if (user.value.isLogin || user.value.isGuest) {
+                    if (user.value?.isLogin == true || user.value?.isGuest == true) {
                         MedEaseApp(
                             onLogout = {
                                 logout()
