@@ -14,7 +14,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "BASE_URL", "\"https:\"")
+        buildConfigField("String", "BASE_URL", "\"https://medeasebackend-1-lqag4dnu5a-et.a.run.app/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

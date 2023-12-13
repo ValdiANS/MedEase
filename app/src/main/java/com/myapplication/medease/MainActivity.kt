@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
                     )
                     if (user.value.isLogin || user.value.isGuest) {
                         MedEaseApp(
+                            userModel = user.value,
                             onLogout = {
                                 logout()
                             }

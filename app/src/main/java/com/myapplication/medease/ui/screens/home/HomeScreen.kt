@@ -1,14 +1,24 @@
 package com.myapplication.medease.ui.screens.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,44 +35,78 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myapplication.medease.R
-import com.myapplication.medease.data.local.entity.MedicineItems
-import com.myapplication.medease.data.local.entity.dummyMedicineItems
+import com.myapplication.medease.ViewModelFactory
+import com.myapplication.medease.data.local.preference.UserModel
+import com.myapplication.medease.data.remote.response.DataItem
 import com.myapplication.medease.ui.common.UiState
 import com.myapplication.medease.ui.components.ErrorScreen
 import com.myapplication.medease.ui.components.LoadingItem
 import com.myapplication.medease.ui.components.MedicineItem
-import com.myapplication.medease.ui.theme.MedEaseTheme
 
 @Composable
 fun HomeScreen(
+    userModel: UserModel,
+    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel = viewModel(
+        factory = ViewModelFactory.getInstance(LocalContext.current)
+    ),
     onDetailClick: (String) -> Unit,
     onNavigateToCamera: () -> Unit,
 ) {
+    val query by homeViewModel.query
+    val allMedicine by homeViewModel.listMedicineState.collectAsState()
+    val recentSearchState by homeViewModel.recentSearched.collectAsState()
+    val searchedMedicineState by homeViewModel.searchedMedicine.collectAsState()
+    var isSearch by remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler(enabled = isSearch) {
+        if (isSearch) {
+            isSearch = false
+        }
+    }
+
     HomeContent(
-        username = "Bedul",
-        query = "",
-        listMedicine = dummyMedicineItems,
-        onQueryChanged = {},
-        onSearch = {},
+        username = userModel.name,
+        query = query,
+        allMedicineState = allMedicine,
+        recentSearchState = recentSearchState,
+        searchedMedicineState = searchedMedicineState,
+        isSearch = isSearch,
+        onQueryChanged = homeViewModel::searchMedicine,
+        onSearch = {
+            isSearch = true
+        },
         navigateToDetail = onDetailClick,
         navigateToScan = onNavigateToCamera
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
     username: String,
     query: String,
-    listMedicine: List<MedicineItems>,
+    allMedicineState: UiState<List<DataItem>>,
+    recentSearchState: UiState<List<DataItem>>,
+    searchedMedicineState: UiState<List<DataItem>>,
+    isSearch: Boolean,
     modifier: Modifier = Modifier,
     onQueryChanged: (String) -> Unit,
     onSearch: (String) -> Unit,
@@ -76,7 +120,7 @@ fun HomeContent(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+//                .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
             Banner(
@@ -85,31 +129,89 @@ fun HomeContent(
                 onSearch = onSearch,
                 onQueryChanged = onQueryChanged
             )
-            HomeSection(
-                title = stringResource(R.string.list_of_medicine),
-                uiState = UiState.Success(listMedicine)
-            ) {
-                MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
-            }
-            HomeSection(title = stringResource(R.string.recent_search), uiState = UiState.Loading) {
-                MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
-            }
-            HomeSection(
-                title = stringResource(R.string.recent_medicine),
-                uiState = UiState.Error("no data")
-            ) {
-                MedicineRow(listMedicine = listMedicine, navigateToDetail = navigateToDetail)
+            if (!isSearch) {
+                LazyColumn {
+                    item {
+                        HomePage(
+                            allMedicineState = allMedicineState,
+                            recentSearchState = recentSearchState,
+                            navigateToDetail = navigateToDetail
+                        )
+                    }
+                }
+            } else {
+                SearchPage(
+                    uiState = searchedMedicineState,
+                    navigateToDetail = navigateToDetail,
+                )
             }
         }
     }
 }
 
 @Composable
+fun SearchPage(
+    uiState: UiState<List<DataItem>>,
+    modifier: Modifier = Modifier,
+    navigateToDetail: (String) -> Unit
+) {
+    when (uiState) {
+        is UiState.Loading -> LoadingItem()
+        is UiState.Success -> {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(160.dp),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                items(uiState.data) { medicine ->
+                    MedicineItem(
+                        name = medicine.nama,
+                        types = medicine.tipe.nama,
+                        doses = stringResource(R.string.doses, medicine.kapasitas),
+                        description = medicine.deskripsi,
+                        onClick = {
+                            navigateToDetail(medicine.id)
+                        }
+                    )
+                }
+            }
+        }
+        is UiState.Error -> ErrorScreen()
+    }
+}
+
+@Composable
+fun HomePage(
+    allMedicineState: UiState<List<DataItem>>,
+    recentSearchState: UiState<List<DataItem>>,
+    modifier: Modifier = Modifier,
+    navigateToDetail: (String) -> Unit
+) {
+    HomeSection(
+        title = stringResource(R.string.list_of_medicine),
+        uiState = allMedicineState,
+        navigateToDetail = navigateToDetail
+    )
+    HomeSection(
+        title = stringResource(R.string.recent_search),
+        uiState = recentSearchState,
+        navigateToDetail = navigateToDetail
+    )
+    // TODO section for favorite/bookmark medicine
+//    HomeSection(
+//        title = stringResource(R.string.recent_medicine),
+//        uiState = allMedicineState,
+//        navigateToDetail = navigateToDetail
+//    )
+}
+
+@Composable
 fun HomeSection(
     title: String,
-    uiState: UiState<Any>,
+    uiState: UiState<List<DataItem>>,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    navigateToDetail: (String) -> Unit,
 ) {
     Column(modifier) {
         Text(
@@ -126,7 +228,7 @@ fun HomeSection(
         ) {
             when (uiState) {
                 is UiState.Loading -> LoadingItem()
-                is UiState.Success -> content()
+                is UiState.Success -> MedicineRow(listMedicine = uiState.data, navigateToDetail = navigateToDetail)
                 is UiState.Error -> ErrorScreen()
             }
         }
@@ -136,7 +238,7 @@ fun HomeSection(
 
 @Composable
 fun MedicineRow(
-    listMedicine: List<MedicineItems>,
+    listMedicine: List<DataItem>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit,
 ) {
@@ -144,12 +246,12 @@ fun MedicineRow(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        items(listMedicine, key = { it.name }) { medicine ->
+        items(listMedicine, key = { it.id }) { medicine ->
             MedicineItem(
-                name = medicine.name,
-                types = medicine.types,
-                doses = medicine.doses,
-                description = medicine.description,
+                name = medicine.nama,
+                types = medicine.tipe.nama,
+                doses = stringResource(R.string.doses, medicine.kapasitas),
+                description = medicine.deskripsi,
                 onClick = {
                     navigateToDetail(medicine.id)
                 }
@@ -266,15 +368,15 @@ fun FABCamera(
 @Preview
 @Composable
 fun HomeContentPrev() {
-    MedEaseTheme {
-        HomeContent(
-            username = "Bedul",
-            query = "",
-            listMedicine = dummyMedicineItems,
-            onQueryChanged = {},
-            onSearch = {},
-            navigateToDetail = {},
-            navigateToScan = {}
-        )
-    }
+//    MedEaseTheme {
+//        HomeContent(
+//            username = "Bedul",
+//            query = "",
+//            listMedicine = dummyMedicineItems,
+//            onQueryChanged = {},
+//            onSearch = {},
+//            navigateToDetail = {},
+//            navigateToScan = {}
+//        )
+//    }
 }

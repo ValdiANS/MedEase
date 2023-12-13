@@ -62,15 +62,7 @@ class AuthenticationActivity : ComponentActivity() {
                         )
                     },
                     onSignInAsGuest = {
-                        viewModel.saveSession(
-                            UserModel(
-                                "",
-                                "",
-                                "",
-                                false,
-                                true
-                            )
-                        )
+                        viewModel.loginAsGuest()
                         startActivity(Intent(this@AuthenticationActivity, MainActivity::class.java))
                     }
                 )
