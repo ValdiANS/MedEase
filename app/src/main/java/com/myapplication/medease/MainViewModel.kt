@@ -12,9 +12,16 @@ class MainViewModel(
     private val authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
-    fun saveSession(userModel: UserModel) {
+    fun loginAsGuest() {
+        val user = UserModel(
+            "",
+            "",
+            "",
+            false,
+            true
+        )
         viewModelScope.launch {
-            authenticationRepository.saveSession(userModel)
+            authenticationRepository.saveSession(user)
         }
     }
 

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MedEase</string>
     <string name="search">Search</string>
-    <string name="hello_home">Hello, %1$s !</string>
+    <string name="hello_home">Hello %1$s !</string>
     <string name="no_data">There is no data</string>
     <string name="welcome_home">Did you take your medicine on time?</string>
     <string name="list_of_medicine">List of Medicine</string>
@@ -37,4 +37,5 @@
     <string name="schedule_screen_title">Make a Schedule</string>
     <string name="medicine_name_label">Medicine Name</string>
     <string name="medicine_name_placeholder">Enter your medicine name...</string>
+    <string name="doses">%d mg</string>
 </resources>

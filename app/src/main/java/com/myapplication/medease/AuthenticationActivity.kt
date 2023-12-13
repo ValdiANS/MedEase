@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.myapplication.medease.data.local.preference.UserModel
 import com.myapplication.medease.ui.navigation.Screen
 import com.myapplication.medease.ui.screens.authentication.AuthenticationScreen
 import com.myapplication.medease.ui.screens.welcome.WelcomeScreen
@@ -62,15 +61,7 @@ class AuthenticationActivity : ComponentActivity() {
                         )
                     },
                     onSignInAsGuest = {
-                        viewModel.saveSession(
-                            UserModel(
-                                id = "",
-                                name = "",
-                                token = "",
-                                isLogin = false,
-                                isGuest = true
-                            )
-                        )
+                        viewModel.loginAsGuest()
                         startActivity(Intent(this@AuthenticationActivity, MainActivity::class.java))
                     }
                 )
