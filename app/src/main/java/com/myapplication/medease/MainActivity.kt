@@ -2,6 +2,7 @@ package com.myapplication.medease
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -33,10 +34,7 @@ class MainActivity : ComponentActivity() {
                             name = "",
                             token = "",
                             isLogin = false,
-                            isGuest = true /*
-                            gatau kenapa klo initialnya false (yg mana menurut gua seharusnya false) malah ga mau munculin medeasenya pas login/guest
-                            TODO dont forget delete this comment lol
-                            */
+                            isGuest = true
                         )
                     )
                     if (user.value?.isLogin == true || user.value?.isGuest == true) {

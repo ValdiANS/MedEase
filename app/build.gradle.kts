@@ -97,6 +97,8 @@ dependencies {
 
     implementation("androidx.compose.runtime:runtime-livedata") //observeAsState
 
+    implementation ("com.auth0.android:jwtdecode:2.0.2")
+
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")

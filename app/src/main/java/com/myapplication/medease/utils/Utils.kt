@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
+import com.auth0.android.jwt.JWT
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -78,6 +79,11 @@ fun convertMillisToString(timeMillis: Long): String {
     calendar.timeInMillis = timeMillis
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return sdf.format(calendar.time)
+}
+
+fun getIdByToken(token: String): String? {
+    val jwt = JWT(token)
+    return jwt.getClaim("id").asString()
 }
 
 fun getCurrentDateAndTime(): String {
