@@ -6,11 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.myapplication.medease.data.remote.response.LoginResponse
 import com.myapplication.medease.data.remote.response.RegisterResponse
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.utils.isEmail
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -195,6 +193,11 @@ class RegisterFormViewModel(
 
                 when (errorResponse.code) {
                     500 -> {
+                        _isFormValid.value = false
+                        _submitErrorMsg.value = "Username or Email is used!"
+                    }
+
+                    else -> {
                         _isFormValid.value = false
                         _submitErrorMsg.value = "Username or Email is used!"
                     }

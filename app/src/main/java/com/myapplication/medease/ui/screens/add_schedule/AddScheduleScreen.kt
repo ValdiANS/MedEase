@@ -1,16 +1,24 @@
 package com.myapplication.medease.ui.screens.add_schedule
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +33,7 @@ import com.myapplication.medease.R
 import com.myapplication.medease.ui.components.CustomOutlinedTextField
 import com.myapplication.medease.ui.theme.MedEaseTheme
 import com.myapplication.medease.ui.theme.montserratFamily
+import com.myapplication.medease.utils.getCurrentDateAndTime
 
 @Composable
 fun AddScheduleScreen() {
@@ -56,7 +65,7 @@ fun AddScheduleScreen() {
                     )
 
                     Text(
-                        text = "Sat, 18 Nov 2023",
+                        text = getCurrentDateAndTime(),
                         fontSize = 12.sp,
                         fontFamily = montserratFamily,
                         fontWeight = FontWeight.Bold,
@@ -86,6 +95,28 @@ fun AddScheduleScreen() {
                 placeholderText = stringResource(R.string.medicine_name_placeholder),
                 borderColor = Color.Black,
                 trailingIconDrawableId = R.drawable.ic_edit
+            )
+
+            Spacer(Modifier.size(16.dp))
+
+            Text(
+                text = stringResource(R.string.set_time_title),
+                fontSize = 14.sp,
+                fontFamily = montserratFamily,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.Black,
+            )
+
+            Spacer(Modifier.size(16.dp))
+
+            TextField(
+                value = "",
+                onValueChange = { },
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                ),
             )
         }
     }
