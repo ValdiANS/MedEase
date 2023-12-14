@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -16,12 +18,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,14 +46,19 @@ import com.myapplication.medease.ui.theme.MedEaseTheme
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
+    viewModel: ProfileScreenViewModel = viewModel(
+        factory = ViewModelFactory.getInstance(LocalContext.current)
+    ),
     onLogout: () -> Unit
 ) {
+    val username by viewModel.username
+    val focusRequester by remember { mutableStateOf(FocusRequester()) }
     ProfileContent(
-        username = "bedul",
+        username = username,
         email = "bedul@gmail.com",
         password = "password",
-        onEdit = {},
-        onValueChange = {},
+        focusRequester = focusRequester,
+        onValueChange = viewModel::onUsernameChanged,
         onLogout = onLogout
     )
 }
@@ -54,9 +68,9 @@ fun ProfileContent(
     username: String,
     email: String,
     password: String,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    onEdit: () -> Unit,
-    onValueChange: () -> Unit,
+    onValueChange: (String) -> Unit,
     onLogout: () -> Unit
 ) {
     Column {
@@ -79,7 +93,7 @@ fun ProfileContent(
             email = email,
             password = password,
             onValueChange = onValueChange,
-            onEdit = onEdit,
+            focusRequester = focusRequester,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 32.dp)
@@ -104,9 +118,9 @@ fun FormProfile(
     username: String,
     email: String,
     password: String,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    onValueChange: () -> Unit,
-    onEdit: () -> Unit
+    onValueChange: (String) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -114,10 +128,10 @@ fun FormProfile(
     ) {
         TextField(
             value = username,
-            onValueChange = { onValueChange() },
+            onValueChange = onValueChange,
             enabled = true,
             leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = "username")},
-            trailingIcon = { IconButton(onClick = { onEdit() }) {
+            trailingIcon = { IconButton(onClick = { focusRequester.requestFocus() }) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit"
@@ -128,8 +142,11 @@ fun FormProfile(
                 unfocusedContainerColor = MaterialTheme.colorScheme.background,
                 disabledContainerColor = MaterialTheme.colorScheme.background,
             ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {}),
             modifier = Modifier
                 .fillMaxWidth()
+                .focusRequester(focusRequester)
                 .padding(horizontal = 32.dp)
         )
         TextField(
@@ -181,7 +198,7 @@ fun FormPrev() {
         username = "bedul",
         email = "bedul@gmail.com",
         password = "password",
-        onEdit = {},
         onValueChange = {},
+        focusRequester = FocusRequester()
     )
 }
