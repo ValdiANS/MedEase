@@ -85,3 +85,9 @@ fun getIdByToken(token: String): String? {
     val jwt = JWT(token)
     return jwt.getClaim("id").asString()
 }
+
+fun getCurrentDateAndTime(): String {
+    val currentTime = Calendar.getInstance().time
+    val dataFormat = SimpleDateFormat("EEE, d MMM yyyy")
+    return dataFormat.format(currentTime)
+}

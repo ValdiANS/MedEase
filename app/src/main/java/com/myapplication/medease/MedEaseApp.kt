@@ -23,6 +23,7 @@ import com.myapplication.medease.data.local.preference.UserModel
 import com.myapplication.medease.ui.components.BottomBar
 import com.myapplication.medease.ui.navigation.NavigationItem
 import com.myapplication.medease.ui.navigation.Screen
+import com.myapplication.medease.ui.screens.add_schedule.AddScheduleScreen
 import com.myapplication.medease.ui.screens.camera.CameraScreen
 import com.myapplication.medease.ui.screens.detail_medicine.DetailMedicineScreen
 import com.myapplication.medease.ui.screens.home.HomeScreen
@@ -97,7 +98,11 @@ fun MedEaseApp(
             }
 
             composable(Screen.Schedule.route) {
-                ScheduleScreen()
+                ScheduleScreen(
+                    onNavigateToAddSchedule = {
+                        navController.navigate(Screen.AddSchedule.route)
+                    }
+                )
             }
 
             composable(Screen.Profile.route) {
@@ -134,6 +139,10 @@ fun MedEaseApp(
                         navController.navigateUp()
                     }
                 )
+            }
+
+            composable(Screen.AddSchedule.route) {
+                AddScheduleScreen()
             }
         }
     }

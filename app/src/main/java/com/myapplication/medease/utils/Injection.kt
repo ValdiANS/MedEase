@@ -3,9 +3,11 @@ package com.myapplication.medease.utils
 import android.content.Context
 import com.myapplication.medease.data.local.preference.UserPreferences
 import com.myapplication.medease.data.local.preference.dataStore
+import com.myapplication.medease.data.local.room.MedEaseDatabase
 import com.myapplication.medease.data.remote.retrofit.ApiConfig
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.data.repository.MedicineRepository
+import com.myapplication.medease.data.repository.ScheduleRepository
 
 object Injection {
     fun provideAuthenticationRepository(context: Context): AuthenticationRepository {
@@ -18,5 +20,12 @@ object Injection {
     fun provideMedicineRepository(context: Context): MedicineRepository {
         val apiService = ApiConfig.getApiService()
         return MedicineRepository.getInstance(apiService)
+    }
+
+    fun provideScheduleRepository(context: Context): ScheduleRepository {
+        val medEaseDb = MedEaseDatabase.getInstance(context)
+        val scheduleDao = medEaseDb.scheduleDao()
+
+        return ScheduleRepository.getInstance(scheduleDao)
     }
 }
