@@ -79,3 +79,9 @@ fun convertMillisToString(timeMillis: Long): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return sdf.format(calendar.time)
 }
+
+fun getCurrentDateAndTime(): String {
+    val currentTime = Calendar.getInstance().time
+    val dataFormat = SimpleDateFormat("EEE, d MMM yyyy")
+    return dataFormat.format(currentTime)
+}
