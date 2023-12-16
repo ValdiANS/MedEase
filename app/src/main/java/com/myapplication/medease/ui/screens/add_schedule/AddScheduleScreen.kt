@@ -36,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -80,7 +81,9 @@ fun AddScheduleScreen(
     val enteredTime by viewModel.enteredTime
     val enteredTimeList by viewModel.enteredTimeList
 
-    viewModel.enteredMedicineNameChangeHandler(medicineName)
+    LaunchedEffect(null) {
+        viewModel.enteredMedicineNameChangeHandler(medicineName)
+    }
 
     val userData = viewModel.getSession().observeAsState()
 
