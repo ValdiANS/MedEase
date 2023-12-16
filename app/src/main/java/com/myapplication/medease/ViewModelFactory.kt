@@ -9,6 +9,7 @@ import com.myapplication.medease.data.repository.ScheduleRepository
 import com.myapplication.medease.ui.screens.add_schedule.AddScheduleScreenViewModel
 import com.myapplication.medease.ui.screens.authentication.LoginFormViewModel
 import com.myapplication.medease.ui.screens.authentication.RegisterFormViewModel
+import com.myapplication.medease.ui.screens.detail_medicine.DetailScreenViewModel
 import com.myapplication.medease.ui.screens.home.HomeViewModel
 import com.myapplication.medease.ui.screens.profile.ProfileScreenViewModel
 import com.myapplication.medease.ui.screens.schedule.ScheduleScreenViewModel
@@ -34,6 +35,8 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(HomeViewModel::class.java) ->
                 HomeViewModel(medicineRepository) as T
+            modelClass.isAssignableFrom(DetailScreenViewModel::class.java) ->
+                DetailScreenViewModel(medicineRepository) as T
 
             modelClass.isAssignableFrom(ProfileScreenViewModel::class.java) ->
                 ProfileScreenViewModel(authenticationRepository) as T

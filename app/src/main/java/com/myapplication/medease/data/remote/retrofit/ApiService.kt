@@ -3,10 +3,13 @@ package com.myapplication.medease.data.remote.retrofit
 import com.myapplication.medease.data.remote.response.LoginResponse
 import com.myapplication.medease.data.remote.response.RegisterResponse
 import com.myapplication.medease.data.remote.response.AllMedicineResponse
+import com.myapplication.medease.data.remote.response.Data
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
 
 interface ApiService {
     @FormUrlEncoded
@@ -29,4 +32,10 @@ interface ApiService {
 
     @GET("api/obat")
     suspend fun getAllMedicine() : AllMedicineResponse
+
+    @GET("api/profile/user/{id}")
+    suspend fun getProfileByUserId(
+        @Path("id") id: String,
+        @Header("token") token: String
+    ) : Data
 }

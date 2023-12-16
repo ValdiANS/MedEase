@@ -3,6 +3,7 @@ package com.myapplication.medease.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +32,7 @@ fun MedicineItem(
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(175.dp)
             .padding(4.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp)
@@ -42,6 +44,8 @@ fun MedicineItem(
         ) {
             Text(
                 text = name,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
                 style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.ExtraBold
                 )
@@ -82,7 +86,7 @@ fun MedicineItem(
 fun MedicineItemPreview() {
     MedEaseTheme {
         MedicineItem(
-            name = "Cefixime Tryhydrate",
+            name = "Cefixime Tryhydratesadasdasfasfd",
             types = "Antibiotics",
             doses = "100 mg",
             description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",

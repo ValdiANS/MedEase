@@ -29,9 +29,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -127,8 +129,8 @@ fun FormProfile(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         TextField(
-            value = username,
-            onValueChange = onValueChange,
+            value = TextFieldValue(username, selection = TextRange(username.length)),
+            onValueChange = { onValueChange(it.text) },
             enabled = true,
             leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = "username")},
             trailingIcon = { IconButton(onClick = { focusRequester.requestFocus() }) {

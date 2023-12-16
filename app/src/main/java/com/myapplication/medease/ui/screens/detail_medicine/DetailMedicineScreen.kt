@@ -27,15 +27,24 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.myapplication.medease.R
+import com.myapplication.medease.ViewModelFactory
+import com.myapplication.medease.ui.common.UiState
+import com.myapplication.medease.ui.components.ErrorScreen
+import com.myapplication.medease.ui.components.LoadingItem
 import com.myapplication.medease.ui.theme.ColorNeutral
 import com.myapplication.medease.ui.theme.ColorPrimary
 import com.myapplication.medease.ui.theme.ColorSecondary
@@ -48,24 +57,53 @@ fun DetailMedicineScreen(
     onNavigateBack: () -> Unit,
     onSetSchedule: (medicineName: String) -> Unit,
     modifier: Modifier = Modifier,
+    detailScreenViewModel: DetailScreenViewModel = viewModel(
+        factory = ViewModelFactory.getInstance(LocalContext.current)
+    ),
 ) {
     // Dummy
-    DetailMedicineContent(
-        medicineName = "Panadol Merah",
-        medicineCategory = "Obat Bebas (Hijau)",
-        generalIndication = "Obat ini dapat digunakan untuk meringankan sakit kepala dan sakit gigi.",
-        medicineIngredients = "Tiap kaplet mengandung Paracetamol 500 mg dan Caffeine 65 mg.",
-        adultDose = "1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
-        kidDose = "Anak-anak usia lebih dari 12 tahun, 1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
-        additionalThings = "Bila setelah 2 hari demam tidak menurun atau setelah 5 hari nyeri tidak menghilang, segera hubungi Unit Pelayanan Kesehatan. Kategori kehamilan : Kategori C: Mungkin berisiko. Selengkapnya bisa diakses melalui website Halodoc berikut.",
-        contraindications = "Wanita hamil dan menyusui. Tidak dianjurkan untuk digunakan pada anak dibawah usia 12 tahun",
-        medicineDosage = "750mg / capsules",
-        medicineDetail = "Balsalazide is a 5-aminosalicylic acid (5-ASA) medication used to treat ulcerative colitis, a chronic inflammatory bowel disease (IBD) that affects the large intestine. It works by reducing inflammation in the colon. ",
-        medicineSideEffect = "Reaksi efek samping jarang terjadi seperti  reaksi hipersensitifitas. Pemakaian obat umumnya memiliki efek samping tertentu dan sesuai dengan masing-masing individu. Jika terjadi efek samping yang berlebih dan berbahaya, hentikan penggunaan obat dan segera hubungi dokter. Selengkapnya bisa diakses melalui website Halodoc berikut.",
-        onNavigateBack = onNavigateBack,
-        onSetSchedule = onSetSchedule,
-        modifier = modifier
-    )
+//    DetailMedicineContent(
+//        medicineName = "Panadol Merah",
+//        medicineCategory = "Obat Bebas (Hijau)",
+//        generalIndication = "Obat ini dapat digunakan untuk meringankan sakit kepala dan sakit gigi.",
+//        medicineIngredients = "Tiap kaplet mengandung Paracetamol 500 mg dan Caffeine 65 mg.",
+//        adultDose = "1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
+//        kidDose = "Anak-anak usia lebih dari 12 tahun, 1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
+//        additionalThings = "Bila setelah 2 hari demam tidak menurun atau setelah 5 hari nyeri tidak menghilang, segera hubungi Unit Pelayanan Kesehatan. Kategori kehamilan : Kategori C: Mungkin berisiko. Selengkapnya bisa diakses melalui website Halodoc berikut.",
+//        contraindications = "Wanita hamil dan menyusui. Tidak dianjurkan untuk digunakan pada anak dibawah usia 12 tahun",
+//        medicineDosage = "750mg / capsules",
+//        medicineDetail = "Balsalazide is a 5-aminosalicylic acid (5-ASA) medication used to treat ulcerative colitis, a chronic inflammatory bowel disease (IBD) that affects the large intestine. It works by reducing inflammation in the colon. ",
+//        medicineSideEffect = "Reaksi efek samping jarang terjadi seperti  reaksi hipersensitifitas. Pemakaian obat umumnya memiliki efek samping tertentu dan sesuai dengan masing-masing individu. Jika terjadi efek samping yang berlebih dan berbahaya, hentikan penggunaan obat dan segera hubungi dokter. Selengkapnya bisa diakses melalui website Halodoc berikut.",
+//        onNavigateBack = onNavigateBack,
+//        modifier = modifier
+//    )
+    detailScreenViewModel.medicineState.collectAsState(initial = UiState.Loading).value.let { uiState ->
+        when (uiState) {
+            is UiState.Loading -> {
+                LoadingItem()
+                detailScreenViewModel.getDetailMedicineById(medicineId)
+            }
+            is UiState.Success -> {
+                // TODO specify ingredients and medicine detail and also kids dose if null
+                DetailMedicineContent(
+                    medicineName = uiState.data.nama,
+                    medicineCategory = uiState.data.tipe.nama,
+                    generalIndication = uiState.data.deskripsi,
+                    medicineIngredients = "",
+                    adultDose = uiState.data.detailObat.dewasa,
+                    kidDose = uiState.data.detailObat.anak ?: "",
+                    additionalThings = uiState.data.detailObat.perhatian,
+                    contraindications = uiState.data.detailObat.kontraIndikasi,
+                    medicineSideEffect = uiState.data.detailObat.efekSamping,
+                    medicineDosage = stringResource(R.string.doses, uiState.data.kapasitas),
+                    medicineDetail = "",
+                    onNavigateBack = onNavigateBack,
+                    onSetSchedule = onSetSchedule,
+                    modifier = modifier)
+            }
+            else -> ErrorScreen()
+        }
+    }
 }
 
 @Composable
