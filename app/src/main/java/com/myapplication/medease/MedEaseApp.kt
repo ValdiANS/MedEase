@@ -153,7 +153,7 @@ fun MedEaseApp(
                     it.arguments?.getString(stringResource(R.string.medicine_name)) ?: ""
 
                 AddScheduleScreen(
-                    medicineName = medicineName,
+                    medicineName = if (medicineName == "{${stringResource(R.string.medicine_name)}}") "" else medicineName,
                     onNavigateBack = {
                         navController.navigateUp()
                     },
