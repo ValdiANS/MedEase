@@ -5,6 +5,7 @@ import com.myapplication.medease.data.local.preference.UserPreferences
 import com.myapplication.medease.data.remote.response.LoginResponse
 import com.myapplication.medease.data.remote.response.RegisterResponse
 import com.myapplication.medease.data.remote.retrofit.ApiService
+import com.myapplication.medease.utils.getIdByToken
 import kotlinx.coroutines.flow.Flow
 
 class AuthenticationRepository(
@@ -17,15 +18,19 @@ class AuthenticationRepository(
 
         if (loginResponse.code == 200) {
             loginData?.token?.let { token ->
-                userPreferences.saveSession(
-                    UserModel(
-                        id = "",
-                        name = "",
-                        token = token,
-                        isLogin = true,
-                        isGuest = false
+                val id = getIdByToken(token)
+                id?.let {
+                    val profileResponse = apiService.getProfileByUserId(id, token)
+                    saveSession(
+                        UserModel(
+                            id = profileResponse.id,
+                            name = profileResponse.name,
+                            token = token,
+                            isLogin = true,
+                            isGuest = false
+                        )
                     )
-                )
+                }
             }
         }
 

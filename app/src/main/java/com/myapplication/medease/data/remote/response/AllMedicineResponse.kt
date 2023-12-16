@@ -41,25 +41,25 @@ data class DataItem(
 data class DetailObat(
 
 	@field:SerializedName("dewasa")
-	val dewasa: String? = null,
+	val dewasa: String,
 
 	@field:SerializedName("kontraIndikasi")
-	val kontraIndikasi: String? = null,
+	val kontraIndikasi: String,
 
 	@field:SerializedName("indikasi_umum")
-	val indikasiUmum: String? = null,
+	val indikasiUmum: String,
 
 	@field:SerializedName("link")
 	val link: String? = null,
 
 	@field:SerializedName("efek_samping")
-	val efekSamping: String? = null,
+	val efekSamping: String,
 
 	@field:SerializedName("anak")
 	val anak: String? = null,
 
 	@field:SerializedName("perhatian")
-	val perhatian: String? = null
+	val perhatian: String
 )
 
 data class Tipe(
