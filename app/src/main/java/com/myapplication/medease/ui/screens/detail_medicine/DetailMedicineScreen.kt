@@ -46,7 +46,7 @@ import com.myapplication.medease.ui.theme.montserratFamily
 fun DetailMedicineScreen(
     medicineId: String,
     onNavigateBack: () -> Unit,
-    onSetSchedule: () -> Unit,
+    onSetSchedule: (medicineName: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // Dummy
@@ -63,6 +63,7 @@ fun DetailMedicineScreen(
         medicineDetail = "Balsalazide is a 5-aminosalicylic acid (5-ASA) medication used to treat ulcerative colitis, a chronic inflammatory bowel disease (IBD) that affects the large intestine. It works by reducing inflammation in the colon. ",
         medicineSideEffect = "Reaksi efek samping jarang terjadi seperti  reaksi hipersensitifitas. Pemakaian obat umumnya memiliki efek samping tertentu dan sesuai dengan masing-masing individu. Jika terjadi efek samping yang berlebih dan berbahaya, hentikan penggunaan obat dan segera hubungi dokter. Selengkapnya bisa diakses melalui website Halodoc berikut.",
         onNavigateBack = onNavigateBack,
+        onSetSchedule = onSetSchedule,
         modifier = modifier
     )
 }
@@ -81,6 +82,7 @@ fun DetailMedicineContent(
     medicineDosage: String,
     medicineDetail: String,
     onNavigateBack: () -> Unit,
+    onSetSchedule: (medicineName: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -220,8 +222,7 @@ fun DetailMedicineContent(
 
                     Button(
                         onClick = {
-                            // Set this medicine schedule
-                            // TODO("Set this medicine schedule")
+                            onSetSchedule(medicineName)
                         },
                         shape = RoundedCornerShape(size = 20.dp),
                         contentPadding = PaddingValues(16.dp),

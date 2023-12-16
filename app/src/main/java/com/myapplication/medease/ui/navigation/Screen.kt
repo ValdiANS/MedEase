@@ -16,5 +16,7 @@ sealed class Screen(val route: String) {
     object Welcome : Screen("welcome")
     object Authentication : Screen("welcome/authentication")
 
-    data object AddSchedule : Screen("schedule/addSchedule")
+    data object AddSchedule : Screen("schedule/addSchedule/{medicineName}") {
+        fun createRoute(medicineName: String) = "schedule/addSchedule/$medicineName"
+    }
 }

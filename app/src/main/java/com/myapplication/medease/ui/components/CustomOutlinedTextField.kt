@@ -201,7 +201,7 @@ fun CustomOutlinedTextFieldButton(
                 .heightIn(
                     min = OutlinedTextFieldDefaults.MinHeight,
                 )
-                .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(20.dp))
+                .border(width = 0.dp, color = Color.White, shape = RoundedCornerShape(20.dp))
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,

@@ -23,9 +23,10 @@ object Injection {
     }
 
     fun provideScheduleRepository(context: Context): ScheduleRepository {
+        val userPreferences = UserPreferences.getInstance(context.dataStore)
         val medEaseDb = MedEaseDatabase.getInstance(context)
         val scheduleDao = medEaseDb.scheduleDao()
 
-        return ScheduleRepository.getInstance(scheduleDao)
+        return ScheduleRepository.getInstance(userPreferences, scheduleDao)
     }
 }
