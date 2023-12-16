@@ -1,5 +1,9 @@
 package com.myapplication.medease.ui.screens.schedule
 
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myapplication.medease.R
 import com.myapplication.medease.ViewModelFactory
@@ -54,32 +60,40 @@ fun ScheduleScreen(
         factory = ViewModelFactory.getInstance(LocalContext.current)
     ),
 ) {
-//    viewModel.listScheduleState.collectAsState().value.let { uiState ->
-//        when (uiState) {
-//            is UiState.Loading -> {
-//                isLoadingSchedule = true
-//                viewModel.getAllSchedule()
-//            }
-//
-//            is UiState.Success -> {
-//                Log.d("test123", "schedule: ${uiState.data}")
-//
-//                isLoadingSchedule = false
-////                dummyScheduleList = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-//            }
-//
-//            is UiState.Error -> {
-//
-//            }
-//        }
-//    }
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(
+                context,
+                "Notifications permission granted",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    if (ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    ) {
+        // permission granted
+    } else {
+        SideEffect {
+            launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
 
     viewModel.listScheduleState.collectAsState().value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
                 ScheduleContent(
                     scheduleList = emptyList(),
-                    onDeleteSchedule = viewModel::deleteSchedule,
+                    onDeleteSchedule = {
+                        viewModel.deleteSchedule(context, it)
+                    },
                     onAddClick = onNavigateToAddSchedule,
                     isLoading = true,
                 )
@@ -90,7 +104,9 @@ fun ScheduleScreen(
             is UiState.Success -> {
                 ScheduleContent(
                     scheduleList = uiState.data,
-                    onDeleteSchedule = viewModel::deleteSchedule,
+                    onDeleteSchedule = {
+                        viewModel.deleteSchedule(context, it)
+                    },
                     onAddClick = onNavigateToAddSchedule,
                     isLoading = false,
                 )
@@ -204,20 +220,6 @@ fun ScheduleContent(
                     }
                 }
             }
-
-//            items(scheduleList, key = { it }) { number ->
-//                ScheduleItem(
-//                    title = "Itraconazole $number",
-//                    dose = "1 Pills 3x / day",
-//                    hourList = listOf("07:00", "12:00", "20:00"),
-//                    onSwipe = {
-//                        onDeleteSchedule(number)
-//                    },
-//                    modifier = Modifier
-//                        .animateItemPlacement(tween(durationMillis = 250))
-//                        .padding(horizontal = 16.dp)
-//                )
-//            }
 
             items(scheduleList, key = { it.schedule.scheduleId }) { item: ScheduleWithTime ->
                 ScheduleItem(

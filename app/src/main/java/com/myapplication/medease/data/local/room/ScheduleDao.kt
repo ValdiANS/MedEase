@@ -22,8 +22,14 @@ interface ScheduleDao {
     @Query("SELECT * FROM schedule")
     fun getAllSchedule(): LiveData<List<ScheduleEntity>>
 
+    @Query("SELECT * FROM schedule WHERE scheduleId = :scheduleId")
+    fun getScheduleById(scheduleId: Int): ScheduleEntity
+
     @Query("SELECT * FROM schedule_time")
     fun getAllScheduleTime(): LiveData<List<ScheduleTimeEntity>>
+
+    @Query("SELECT * FROM schedule_time WHERE scheduleTimeId = :scheduleTimeId")
+    fun getScheduleTimeById(scheduleTimeId: Int): ScheduleTimeEntity
 
     @Transaction
     @Query("SELECT * FROM schedule")
@@ -31,11 +37,20 @@ interface ScheduleDao {
 
     @Transaction
     @Query("SELECT * FROM schedule WHERE scheduleId = :scheduleId")
-    fun getScheduleAndTimesById(scheduleId: Int): LiveData<ScheduleWithTime>
+    suspend fun getScheduleAndTimesById(scheduleId: Int): ScheduleWithTime
 
     @Delete
-    fun deleteSchedule(schedule: ScheduleEntity)
+    suspend fun deleteSchedule(schedule: ScheduleEntity)
 
     @Delete
-    fun deleteScheduleTime(scheduleTime: ScheduleTimeEntity)
+    suspend fun deleteScheduleTime(scheduleTime: ScheduleTimeEntity)
+
+    @Query("DELETE FROM schedule_time WHERE scheduleId = :scheduleId")
+    suspend fun deleteScheduleTimeByScheduleId(scheduleId: Int)
+
+    @Transaction
+    suspend fun deleteScheduleAndTime(schedule: ScheduleEntity) {
+        deleteSchedule(schedule)
+        deleteScheduleTimeByScheduleId(schedule.scheduleId)
+    }
 }

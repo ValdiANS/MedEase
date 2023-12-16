@@ -39,4 +39,7 @@
     <string name="medicine_name_placeholder">Enter your medicine name...</string>
     <string name="doses">%d mg</string>
     <string name="set_time_title">Set Time</string>
+    <string name="take_your_medicine">Take Your Medicine</string>
+    <string name="time_to_take_your_medicine_descriptiion">%1$s - It\'s time to take your %2$s medicine</string>
+    <string name="medicine_name">medicineName</string>
 </resources>
