@@ -36,7 +36,7 @@ fun MedEaseApp(
     userModel: UserModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
 ) {
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -124,8 +124,8 @@ fun MedEaseApp(
                     onNavigateBack = {
                         navController.navigateUp()
                     },
-                    onSetSchedule = {
-                        // TODO("Set schedule of this medicine")
+                    onSetSchedule = { medicineName: String ->
+                        navController.navigate(Screen.AddSchedule.createRoute(medicineName))
                     }
                 )
             }
@@ -141,8 +141,23 @@ fun MedEaseApp(
                 )
             }
 
-            composable(Screen.AddSchedule.route) {
-                AddScheduleScreen()
+            composable(
+                route = Screen.AddSchedule.route,
+                arguments = listOf(
+                    navArgument(context.getString(R.string.medicine_name)) {
+                        type = NavType.StringType
+                    }
+                )
+            ) {
+                val medicineName =
+                    it.arguments?.getString(stringResource(R.string.medicine_name)) ?: ""
+
+                AddScheduleScreen(
+                    medicineName = medicineName,
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    },
+                )
             }
         }
     }

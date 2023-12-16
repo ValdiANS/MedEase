@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.myapplication.medease.data.repository.AuthenticationRepository
 import com.myapplication.medease.data.repository.MedicineRepository
 import com.myapplication.medease.data.repository.ScheduleRepository
+import com.myapplication.medease.ui.screens.add_schedule.AddScheduleScreenViewModel
 import com.myapplication.medease.ui.screens.authentication.LoginFormViewModel
 import com.myapplication.medease.ui.screens.authentication.RegisterFormViewModel
 import com.myapplication.medease.ui.screens.detail_medicine.DetailScreenViewModel
@@ -42,6 +43,9 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(ScheduleScreenViewModel::class.java) ->
                 ScheduleScreenViewModel(scheduleRepository) as T
+
+            modelClass.isAssignableFrom(AddScheduleScreenViewModel::class.java) ->
+                AddScheduleScreenViewModel(scheduleRepository) as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

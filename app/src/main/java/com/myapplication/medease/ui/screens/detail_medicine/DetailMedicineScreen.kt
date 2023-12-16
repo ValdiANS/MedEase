@@ -55,7 +55,7 @@ import com.myapplication.medease.ui.theme.montserratFamily
 fun DetailMedicineScreen(
     medicineId: String,
     onNavigateBack: () -> Unit,
-    onSetSchedule: () -> Unit,
+    onSetSchedule: (medicineName: String) -> Unit,
     modifier: Modifier = Modifier,
     detailScreenViewModel: DetailScreenViewModel = viewModel(
         factory = ViewModelFactory.getInstance(LocalContext.current)
@@ -77,7 +77,7 @@ fun DetailMedicineScreen(
 //        onNavigateBack = onNavigateBack,
 //        modifier = modifier
 //    )
-    detailScreenViewModel.medicineState.collectAsState(initial = UiState.Loading).value.let { uiState -> 
+    detailScreenViewModel.medicineState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
                 LoadingItem()
@@ -98,6 +98,7 @@ fun DetailMedicineScreen(
                     medicineDosage = stringResource(R.string.doses, uiState.data.kapasitas),
                     medicineDetail = "",
                     onNavigateBack = onNavigateBack,
+                    onSetSchedule = onSetSchedule,
                     modifier = modifier)
             }
             else -> ErrorScreen()
@@ -119,6 +120,7 @@ fun DetailMedicineContent(
     medicineDosage: String,
     medicineDetail: String,
     onNavigateBack: () -> Unit,
+    onSetSchedule: (medicineName: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -258,8 +260,7 @@ fun DetailMedicineContent(
 
                     Button(
                         onClick = {
-                            // Set this medicine schedule
-                            // TODO("Set this medicine schedule")
+                            onSetSchedule(medicineName)
                         },
                         shape = RoundedCornerShape(size = 20.dp),
                         contentPadding = PaddingValues(16.dp),
