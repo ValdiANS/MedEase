@@ -23,8 +23,8 @@ class AuthenticationRepository(
                     val profileResponse = apiService.getProfileByUserId(id, token)
                     saveSession(
                         UserModel(
-                            id = profileResponse.id,
-                            name = profileResponse.name,
+                            id = profileResponse.data.id,
+                            name = profileResponse.data.name,
                             token = token,
                             isLogin = true,
                             isGuest = false

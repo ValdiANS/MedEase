@@ -4,6 +4,7 @@ import com.myapplication.medease.data.remote.response.LoginResponse
 import com.myapplication.medease.data.remote.response.RegisterResponse
 import com.myapplication.medease.data.remote.response.AllMedicineResponse
 import com.myapplication.medease.data.remote.response.Data
+import com.myapplication.medease.data.remote.response.ProfileByIdResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -37,5 +38,5 @@ interface ApiService {
     suspend fun getProfileByUserId(
         @Path("id") id: String,
         @Header("token") token: String
-    ) : Data
+    ) : ProfileByIdResponse
 }
