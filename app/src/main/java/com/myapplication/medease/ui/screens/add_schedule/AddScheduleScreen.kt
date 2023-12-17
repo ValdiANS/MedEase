@@ -1,6 +1,5 @@
 package com.myapplication.medease.ui.screens.add_schedule
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -90,7 +88,7 @@ fun AddScheduleScreen(
     val addScheduleClickHandler = {
         viewModel.addScheduleToDatabase(
             context,
-            userData.value?.id.toString().ifEmpty { "testUserId" }
+            userData.value?.id.toString()
         )
         onNavigateBack()
     }
