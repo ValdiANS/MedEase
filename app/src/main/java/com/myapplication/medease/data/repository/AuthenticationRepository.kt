@@ -1,12 +1,15 @@
 package com.myapplication.medease.data.repository
 
+import android.util.Log
 import com.myapplication.medease.data.local.preference.UserModel
 import com.myapplication.medease.data.local.preference.UserPreferences
 import com.myapplication.medease.data.remote.response.LoginResponse
 import com.myapplication.medease.data.remote.response.RegisterResponse
+import com.myapplication.medease.data.remote.response.UpdateProfileResponse
 import com.myapplication.medease.data.remote.retrofit.ApiService
 import com.myapplication.medease.utils.getIdByToken
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
 
 class AuthenticationRepository(
     private val userPreferences: UserPreferences,
@@ -25,6 +28,7 @@ class AuthenticationRepository(
                         UserModel(
                             id = profileResponse.data.id,
                             name = profileResponse.data.name,
+                            email = email,
                             token = token,
                             isLogin = true,
                             isGuest = false
@@ -52,6 +56,10 @@ class AuthenticationRepository(
             birthdate = birthdate,
             phoneNumber = ""
         )
+    }
+
+    suspend fun changeNameProfile(id: String, token: String, name: String) : UpdateProfileResponse {
+        return apiService.putProfileUser(id, token, name)
     }
 
     suspend fun saveSession(userModel: UserModel) {

@@ -22,10 +22,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MedEase"
         tools:targetApi="31">
+        <activity
+            android:name=".SplashActiity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MedEase" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name=".notification.ScheduleReminderReceiver"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <activity
             android:name=".AuthenticationActivity"
@@ -37,11 +49,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MedEase">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

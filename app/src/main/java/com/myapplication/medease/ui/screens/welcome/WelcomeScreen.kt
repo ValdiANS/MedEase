@@ -3,10 +3,13 @@ package com.myapplication.medease.ui.screens.welcome
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +42,8 @@ fun WelcomeScreen(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(ColorNeutral)
             .padding(
                 top = 80.dp,
@@ -47,7 +52,7 @@ fun WelcomeScreen(
             )
     ) {
         Image(
-            painter = painterResource(id = R.drawable.welcome_image),
+            painter = painterResource(id = R.drawable.logo_transparent),
             contentDescription = "logo",
             modifier = Modifier.size(60.dp)
         )

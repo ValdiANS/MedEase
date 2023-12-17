@@ -55,6 +55,8 @@ android {
 }
 
 dependencies {
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     val cameraxVersion = "1.3.0"
     val accompanistVersion = "0.32.0"
     val ktxVersion = "2.6.2"

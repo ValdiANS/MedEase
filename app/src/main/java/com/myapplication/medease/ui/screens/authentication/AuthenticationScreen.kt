@@ -68,7 +68,6 @@ fun AuthenticationScreen(
     registerFormViewModel: RegisterFormViewModel = viewModel(
         factory = ViewModelFactory.getInstance(LocalContext.current)
     ),
-    onSignIn: () -> Unit,
     onSignInAsGuest: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -317,7 +316,6 @@ fun AuthenticationTabRow(
 fun AuthenticationScreenPreview() {
     MedEaseTheme {
         AuthenticationScreen(
-            onSignIn = {},
             onSignInAsGuest = {}
         )
     }

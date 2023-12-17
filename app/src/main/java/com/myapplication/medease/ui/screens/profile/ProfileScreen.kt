@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
@@ -28,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -54,14 +57,16 @@ fun ProfileScreen(
     onLogout: () -> Unit
 ) {
     val username by viewModel.username
+    val email by viewModel.email
     val focusRequester by remember { mutableStateOf(FocusRequester()) }
     ProfileContent(
         username = username,
-        email = "bedul@gmail.com",
+        email = email,
         password = "password",
         focusRequester = focusRequester,
         onValueChange = viewModel::onUsernameChanged,
-        onLogout = onLogout
+        onLogout = onLogout,
+        onSaveChange = viewModel::saveChanged
     )
 }
 
@@ -73,9 +78,12 @@ fun ProfileContent(
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onSaveChange: () -> Unit
 ) {
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
         TopBanner {
             Text(
                 text = "My Profile",
@@ -96,6 +104,7 @@ fun ProfileContent(
             password = password,
             onValueChange = onValueChange,
             focusRequester = focusRequester,
+            onSaveChange = onSaveChange,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 32.dp)
@@ -123,7 +132,9 @@ fun FormProfile(
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
+    onSaveChange: () -> Unit
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -133,7 +144,10 @@ fun FormProfile(
             onValueChange = { onValueChange(it.text) },
             enabled = true,
             leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = "username")},
-            trailingIcon = { IconButton(onClick = { focusRequester.requestFocus() }) {
+            trailingIcon = { IconButton(onClick = {
+                focusRequester.requestFocus()
+                keyboardController?.show()
+            }) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit"
@@ -145,7 +159,10 @@ fun FormProfile(
                 disabledContainerColor = MaterialTheme.colorScheme.background,
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {}),
+            keyboardActions = KeyboardActions(onDone = {
+                onSaveChange()
+                keyboardController?.hide()
+            }),
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester)
@@ -201,6 +218,7 @@ fun FormPrev() {
         email = "bedul@gmail.com",
         password = "password",
         onValueChange = {},
-        focusRequester = FocusRequester()
+        focusRequester = FocusRequester(),
+        onSaveChange = {}
     )
 }
