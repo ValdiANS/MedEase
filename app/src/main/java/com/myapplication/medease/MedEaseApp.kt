@@ -1,5 +1,6 @@
 package com.myapplication.medease
 
+import android.content.Intent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
@@ -27,6 +28,7 @@ import com.myapplication.medease.ui.screens.add_schedule.AddScheduleScreen
 import com.myapplication.medease.ui.screens.camera.CameraScreen
 import com.myapplication.medease.ui.screens.detail_medicine.DetailMedicineScreen
 import com.myapplication.medease.ui.screens.home.HomeScreen
+import com.myapplication.medease.ui.screens.locked.LockedScreen
 import com.myapplication.medease.ui.screens.profile.ProfileScreen
 import com.myapplication.medease.ui.screens.schedule.ScheduleScreen
 import com.myapplication.medease.ui.theme.MedEaseTheme
@@ -41,6 +43,8 @@ fun MedEaseApp(
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    val isUserLoggedIn = userModel.isLogin && !userModel.isGuest
 
     val checkIfRouteShowBottomNav: (String) -> Boolean = { route: String ->
         when (route) {
@@ -68,6 +72,11 @@ fun MedEaseApp(
             screen = Screen.Profile
         ),
     )
+
+    val lockedScreenSignInHandler = {
+        val authenticationActivityIntent = Intent(context, AuthenticationActivity::class.java)
+        context.startActivity(authenticationActivityIntent)
+    }
 
     Scaffold(
         bottomBar = {
@@ -98,15 +107,27 @@ fun MedEaseApp(
             }
 
             composable(Screen.Schedule.route) {
-                ScheduleScreen(
-                    onNavigateToAddSchedule = {
-                        navController.navigate(Screen.AddSchedule.route)
-                    }
-                )
+                if (isUserLoggedIn) {
+                    ScheduleScreen(
+                        onNavigateToAddSchedule = {
+                            navController.navigate(Screen.AddSchedule.route)
+                        }
+                    )
+                } else {
+                    LockedScreen(
+                        onSignIn = lockedScreenSignInHandler
+                    )
+                }
             }
 
             composable(Screen.Profile.route) {
-                ProfileScreen(onLogout = onLogout)
+                if (isUserLoggedIn) {
+                    ProfileScreen(onLogout = onLogout)
+                } else {
+                    LockedScreen(
+                        onSignIn = lockedScreenSignInHandler
+                    )
+                }
             }
 
             composable(

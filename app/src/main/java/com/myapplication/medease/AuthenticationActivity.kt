@@ -62,6 +62,7 @@ class AuthenticationActivity : ComponentActivity() {
                     onSignInAsGuest = {
                         viewModel.loginAsGuest()
                         startActivity(Intent(this@AuthenticationActivity, MainActivity::class.java))
+                        finish()
                     }
                 )
             }

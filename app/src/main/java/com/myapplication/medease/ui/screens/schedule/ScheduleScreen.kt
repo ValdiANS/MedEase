@@ -1,6 +1,7 @@
 package com.myapplication.medease.ui.screens.schedule
 
 import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -82,7 +83,9 @@ fun ScheduleScreen(
         // permission granted
     } else {
         SideEffect {
-            launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 

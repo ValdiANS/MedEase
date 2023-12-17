@@ -99,6 +99,11 @@ class LoginFormViewModel(
                         _isFormValid.value = false
                         _submitErrorMsg.value = errorResponse.message
                     }
+
+                    404 -> {
+                        _isFormValid.value = false
+                        _submitErrorMsg.value = errorResponse.message
+                    }
                 }
             }
 
