@@ -22,12 +22,15 @@ class ProfileScreenViewModel(
     private val _isLogin = mutableStateOf(false)
     private val _isGuest = mutableStateOf(false)
 
+    private val _onEdit = mutableStateOf(false)
+    val onEdit: State<Boolean> = _onEdit
 
     init {
         getSession()
     }
 
     fun onUsernameChanged(newInput: String) {
+        _onEdit.value = true
         _username.value = newInput
     }
 
@@ -51,6 +54,7 @@ class ProfileScreenViewModel(
                 )
             }
         }
+        _onEdit.value = false
     }
 
     private fun getSession() {

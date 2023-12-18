@@ -1,5 +1,6 @@
 package com.myapplication.medease.ui.screens.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,8 +57,10 @@ fun ProfileScreen(
     ),
     onLogout: () -> Unit
 ) {
+    val context = LocalContext.current
     val username by viewModel.username
     val email by viewModel.email
+    val onEdit by viewModel.onEdit
     val focusRequester by remember { mutableStateOf(FocusRequester()) }
     ProfileContent(
         username = username,
@@ -66,7 +69,11 @@ fun ProfileScreen(
         focusRequester = focusRequester,
         onValueChange = viewModel::onUsernameChanged,
         onLogout = onLogout,
-        onSaveChange = viewModel::saveChanged
+        onEdit = onEdit,
+        onSaveChange = {
+            viewModel.saveChanged()
+            Toast.makeText(context, "changes saved" ,Toast.LENGTH_SHORT).show()
+        }
     )
 }
 
@@ -75,6 +82,7 @@ fun ProfileContent(
     username: String,
     email: String,
     password: String,
+    onEdit: Boolean,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
@@ -109,18 +117,33 @@ fun ProfileContent(
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 32.dp)
         )
-        CustomButton(
-            text = stringResource(R.string.logout),
-            onClick = onLogout,
-            containerColor = ColorPrimary,
-            contentColor = Color.White,
-            modifier = Modifier
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 32.dp
-                )
-        )
+        if (onEdit) {
+            CustomButton(
+                text = stringResource(R.string.save_changes),
+                onClick = onSaveChange,
+                containerColor = ColorPrimary,
+                contentColor = Color.White,
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 32.dp
+                    )
+            )
+        } else {
+            CustomButton(
+                text = stringResource(R.string.logout),
+                onClick = onLogout,
+                containerColor = ColorPrimary,
+                contentColor = Color.White,
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 32.dp
+                    )
+            )
+        }
     }
 }
 

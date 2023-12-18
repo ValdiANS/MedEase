@@ -4,17 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.myapplication.medease.data.local.entity.MedicineEntity
 import com.myapplication.medease.data.local.entity.ScheduleEntity
 import com.myapplication.medease.data.local.entity.ScheduleTimeEntity
 
 @Database(
-    entities = [ScheduleEntity::class, ScheduleTimeEntity::class],
+    entities = [ScheduleEntity::class, ScheduleTimeEntity::class, MedicineEntity::class],
     version = 1,
     exportSchema = false
 )
 abstract class MedEaseDatabase : RoomDatabase() {
 
     abstract fun scheduleDao(): ScheduleDao
+    abstract fun MedicineDao(): MedicineDao
 
     companion object {
         @Volatile

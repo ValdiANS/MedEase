@@ -1,7 +1,26 @@
 package com.myapplication.medease.data.local.entity
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "medicine")
 data class MedicineEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: String,
+
+    @ColumnInfo(name = "name")
     val name: String,
+
+    @ColumnInfo(name = "type")
+    val type: String,
+
+    @ColumnInfo(name = "doses")
+    val doses: Int,
+
+    @ColumnInfo(name = "description")
+    val description: String
 )
 
 //data dummy

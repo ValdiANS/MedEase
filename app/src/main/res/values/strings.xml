@@ -43,4 +43,5 @@
     <string name="time_to_take_your_medicine_descriptiion">%1$s - It\'s time to take your %2$s medicine</string>
     <string name="medicine_name">medicineName</string>
     <string name="title_activity_splash_actiity">SplashActiity</string>
+    <string name="save_changes">Save Changes</string>
 </resources>
