@@ -5,11 +5,13 @@ import com.myapplication.medease.data.remote.response.RegisterResponse
 import com.myapplication.medease.data.remote.response.AllMedicineResponse
 import com.myapplication.medease.data.remote.response.Data
 import com.myapplication.medease.data.remote.response.ProfileByIdResponse
+import com.myapplication.medease.data.remote.response.UpdateProfileResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ApiService {
@@ -39,4 +41,12 @@ interface ApiService {
         @Path("id") id: String,
         @Header("token") token: String
     ) : ProfileByIdResponse
+
+    @FormUrlEncoded
+    @PUT("api/user/profile/{id}")
+    suspend fun putProfileUser(
+        @Path("id") id: String,
+        @Header("token") token: String,
+        @Field("name") name: String
+    ) : UpdateProfileResponse
 }

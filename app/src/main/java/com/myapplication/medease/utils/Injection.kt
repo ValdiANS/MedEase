@@ -19,7 +19,9 @@ object Injection {
 
     fun provideMedicineRepository(context: Context): MedicineRepository {
         val apiService = ApiConfig.getApiService()
-        return MedicineRepository.getInstance(apiService)
+        val medEaseDb = MedEaseDatabase.getInstance(context)
+        val medicineDao = medEaseDb.MedicineDao()
+        return MedicineRepository.getInstance(apiService, medicineDao)
     }
 
     fun provideScheduleRepository(context: Context): ScheduleRepository {

@@ -1,5 +1,7 @@
 package com.myapplication.medease
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -12,8 +14,16 @@ class MainViewModel(
     private val authenticationRepository: AuthenticationRepository
 ): ViewModel() {
 
+    private val _timeoutSplash = mutableStateOf(false)
+    val timeoutSplash: State<Boolean> get() = _timeoutSplash
+
+    fun setTimeoutSplash(isTimeout: Boolean) {
+        _timeoutSplash.value = isTimeout
+    }
+
     fun loginAsGuest() {
         val user = UserModel(
+            "",
             "",
             "",
             "",

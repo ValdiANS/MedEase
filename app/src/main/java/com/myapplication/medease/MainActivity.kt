@@ -31,21 +31,18 @@ class MainActivity : ComponentActivity() {
                         initial = UserModel(
                             id = "",
                             name = "",
+                            email = "",
                             token = "",
                             isLogin = false,
                             isGuest = true
                         )
                     )
-                    if (user.value?.isLogin == true || user.value?.isGuest == true) {
-                        MedEaseApp(
-                            userModel = user.value,
-                            onLogout = {
-                                logout()
-                            }
-                        )
-                    } else {
-                        logout()
-                    }
+                    MedEaseApp(
+                        userModel = user.value,
+                        onLogout = {
+                            logout()
+                        }
+                    )
                 }
             }
         }

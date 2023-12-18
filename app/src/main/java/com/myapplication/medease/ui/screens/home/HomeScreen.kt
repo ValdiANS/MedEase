@@ -1,28 +1,22 @@
 package com.myapplication.medease.ui.screens.home
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -43,17 +37,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.myapplication.medease.R
 import com.myapplication.medease.ViewModelFactory
+import com.myapplication.medease.data.local.entity.MedicineEntity
 import com.myapplication.medease.data.local.preference.UserModel
-import com.myapplication.medease.data.remote.response.DataItem
 import com.myapplication.medease.ui.common.UiState
 import com.myapplication.medease.ui.components.ErrorScreen
 import com.myapplication.medease.ui.components.LoadingItem
@@ -80,6 +74,7 @@ fun HomeScreen(
     BackHandler(enabled = isSearch) {
         if (isSearch) {
             isSearch = false
+            homeViewModel.getAllRecentMedicine()
         }
     }
 
@@ -90,8 +85,9 @@ fun HomeScreen(
         recentSearchState = recentSearchState,
         searchedMedicineState = searchedMedicineState,
         isSearch = isSearch,
-        onQueryChanged = homeViewModel::searchMedicine,
+        onQueryChanged = homeViewModel::onQueryChange,
         onSearch = {
+            homeViewModel.searchMedicine(query)
             isSearch = true
         },
         navigateToDetail = onDetailClick,
@@ -103,9 +99,9 @@ fun HomeScreen(
 fun HomeContent(
     username: String,
     query: String,
-    allMedicineState: UiState<List<DataItem>>,
-    recentSearchState: UiState<List<DataItem>>,
-    searchedMedicineState: UiState<List<DataItem>>,
+    allMedicineState: UiState<List<MedicineEntity>>,
+    recentSearchState: UiState<List<MedicineEntity>>,
+    searchedMedicineState: UiState<List<MedicineEntity>>,
     isSearch: Boolean,
     modifier: Modifier = Modifier,
     onQueryChanged: (String) -> Unit,
@@ -120,7 +116,6 @@ fun HomeContent(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-//                .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
             Banner(
@@ -151,7 +146,7 @@ fun HomeContent(
 
 @Composable
 fun SearchPage(
-    uiState: UiState<List<DataItem>>,
+    uiState: UiState<List<MedicineEntity>>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit
 ) {
@@ -166,10 +161,10 @@ fun SearchPage(
             ) {
                 items(uiState.data) { medicine ->
                     MedicineItem(
-                        name = medicine.nama,
-                        types = medicine.tipe.nama,
-                        doses = stringResource(R.string.doses, medicine.kapasitas),
-                        description = medicine.deskripsi,
+                        name = medicine.name,
+                        types = medicine.type,
+                        doses = stringResource(R.string.doses, medicine.doses),
+                        description = medicine.description,
                         onClick = {
                             navigateToDetail(medicine.id)
                         }
@@ -178,13 +173,14 @@ fun SearchPage(
             }
         }
         is UiState.Error -> ErrorScreen()
+        else -> ErrorScreen()
     }
 }
 
 @Composable
 fun HomePage(
-    allMedicineState: UiState<List<DataItem>>,
-    recentSearchState: UiState<List<DataItem>>,
+    allMedicineState: UiState<List<MedicineEntity>>,
+    recentSearchState: UiState<List<MedicineEntity>>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit
 ) {
@@ -209,7 +205,7 @@ fun HomePage(
 @Composable
 fun HomeSection(
     title: String,
-    uiState: UiState<List<DataItem>>,
+    uiState: UiState<List<MedicineEntity>>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit,
 ) {
@@ -230,6 +226,7 @@ fun HomeSection(
                 is UiState.Loading -> LoadingItem()
                 is UiState.Success -> MedicineRow(listMedicine = uiState.data, navigateToDetail = navigateToDetail)
                 is UiState.Error -> ErrorScreen()
+                else -> ErrorScreen()
             }
         }
 
@@ -238,7 +235,7 @@ fun HomeSection(
 
 @Composable
 fun MedicineRow(
-    listMedicine: List<DataItem>,
+    listMedicine: List<MedicineEntity>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit,
 ) {
@@ -248,10 +245,10 @@ fun MedicineRow(
     ) {
         items(listMedicine, key = { it.id }) { medicine ->
             MedicineItem(
-                name = medicine.nama,
-                types = medicine.tipe.nama,
-                doses = stringResource(R.string.doses, medicine.kapasitas),
-                description = medicine.deskripsi,
+                name = medicine.name,
+                types = medicine.type,
+                doses = stringResource(R.string.doses, medicine.doses),
+                description = medicine.description,
                 onClick = {
                     navigateToDetail(medicine.id)
                 }
@@ -299,24 +296,13 @@ fun Banner(
                 style = MaterialTheme.typography.titleMedium
             )
         }
-        Card(
+        MySearch(
+            query = query,
+            onSearch = onSearch,
+            onQueryChanged = onQueryChanged,
             modifier = Modifier
                 .offset(y = (-30).dp)
-                .padding(
-                    start = 16.dp,
-                    top = 16.dp,
-                    end = 16.dp
-                ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 16.dp
-            )
-        ) {
-            MySearch(
-                query = query,
-                onSearch = onSearch,
-                onQueryChanged = onQueryChanged
-            )
-        }
+        )
     }
 }
 
@@ -344,7 +330,7 @@ fun MySearch(
         placeholder = {
             Text(text = stringResource(R.string.search))
         },
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 8.dp)
             .fillMaxWidth()
             .heightIn(min = 56.dp),
