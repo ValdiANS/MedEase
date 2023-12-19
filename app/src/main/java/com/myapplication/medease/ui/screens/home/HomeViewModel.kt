@@ -42,6 +42,7 @@ class HomeViewModel(
             medicineRepository.getAllMedicine()
                 .catch {
                     _listMedicineState.value = UiState.Error(it.message.toString())
+                    Log.d("HomeViewModel", "${_listMedicineState.value}")
                 }
                 .collect{ medicineResponse ->
                     if (medicineResponse.isEmpty()) {
@@ -52,8 +53,8 @@ class HomeViewModel(
                                 id = it.id,
                                 name = it.nama,
                                 type = it.tipe.nama,
-                                doses = it.kapasitas,
-                                description = it.deskripsi
+                                capacity = it.detailObat.komposisi[0],
+                                description = it.deskripsi ?: ""
                             )
                         }
                         _listMedicineState.value = UiState.Success(listMedicine)
@@ -103,12 +104,12 @@ class HomeViewModel(
                                 it.id,
                                 it.nama,
                                 it.tipe.nama,
-                                it.kapasitas,
-                                it.deskripsi
+                                it.detailObat.komposisi[0],
+                                it.deskripsi ?: "-"
                             )
                         }
                         _searchedMedicine.value = UiState.Success(listSearched)
-                            listSearched.forEach {
+                        listSearched.forEach {
                             medicineRepository.insertRecentMedicine(it)
                         }
                     }

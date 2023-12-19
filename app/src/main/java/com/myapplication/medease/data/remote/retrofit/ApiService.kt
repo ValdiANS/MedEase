@@ -2,8 +2,7 @@ package com.myapplication.medease.data.remote.retrofit
 
 import com.myapplication.medease.data.remote.response.LoginResponse
 import com.myapplication.medease.data.remote.response.RegisterResponse
-import com.myapplication.medease.data.remote.response.AllMedicineResponse
-import com.myapplication.medease.data.remote.response.Data
+import com.myapplication.medease.data.remote.response.MedicineResponse
 import com.myapplication.medease.data.remote.response.ProfileByIdResponse
 import com.myapplication.medease.data.remote.response.UpdateProfileResponse
 import retrofit2.http.Field
@@ -34,7 +33,7 @@ interface ApiService {
     ): LoginResponse
 
     @GET("api/obat")
-    suspend fun getAllMedicine() : AllMedicineResponse
+    suspend fun getAllMedicine() : MedicineResponse
 
     @GET("api/profile/user/{id}")
     suspend fun getProfileByUserId(

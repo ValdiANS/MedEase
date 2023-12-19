@@ -17,7 +17,7 @@ data class MedicineEntity(
     val type: String,
 
     @ColumnInfo(name = "doses")
-    val doses: Int,
+    val capacity: String,
 
     @ColumnInfo(name = "description")
     val description: String
