@@ -163,7 +163,7 @@ fun SearchPage(
                     MedicineItem(
                         name = medicine.name,
                         types = medicine.type,
-                        doses = stringResource(R.string.doses, medicine.doses),
+                        doses = medicine.capacity,
                         description = medicine.description,
                         onClick = {
                             navigateToDetail(medicine.id)
@@ -247,7 +247,7 @@ fun MedicineRow(
             MedicineItem(
                 name = medicine.name,
                 types = medicine.type,
-                doses = stringResource(R.string.doses, medicine.doses),
+                doses = medicine.capacity,
                 description = medicine.description,
                 onClick = {
                     navigateToDetail(medicine.id)

@@ -71,7 +71,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.0-alpha11")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.navigation:navigation-compose:2.6.0")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.5")
 
     // CameraX
