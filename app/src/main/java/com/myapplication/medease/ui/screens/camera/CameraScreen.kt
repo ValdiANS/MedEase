@@ -88,6 +88,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -428,8 +429,9 @@ private fun capturePhoto(
     onPhotoCaptured: (Bitmap) -> Unit,
 ) {
     val mainExecutor: Executor = ContextCompat.getMainExecutor(context)
+    val executor = Executors.newSingleThreadExecutor()
 
-    cameraController.takePicture(mainExecutor, object : ImageCapture.OnImageCapturedCallback() {
+    cameraController.takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
             val correctedBitmap: Bitmap = image
                 .toBitmap()

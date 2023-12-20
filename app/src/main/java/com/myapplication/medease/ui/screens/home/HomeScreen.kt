@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,6 +77,10 @@ fun HomeScreen(
             isSearch = false
             homeViewModel.getAllRecentMedicine()
         }
+    }
+
+    LaunchedEffect(key1 = isSearch) {
+        homeViewModel.getAllRecentMedicine()
     }
 
     HomeContent(
@@ -148,7 +153,7 @@ fun HomeContent(
 fun SearchPage(
     uiState: UiState<List<MedicineEntity>>,
     modifier: Modifier = Modifier,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (String) -> Unit,
 ) {
     when (uiState) {
         is UiState.Loading -> LoadingItem()
@@ -172,6 +177,7 @@ fun SearchPage(
                 }
             }
         }
+
         is UiState.Error -> ErrorScreen()
         else -> ErrorScreen()
     }
@@ -182,7 +188,7 @@ fun HomePage(
     allMedicineState: UiState<List<MedicineEntity>>,
     recentSearchState: UiState<List<MedicineEntity>>,
     modifier: Modifier = Modifier,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (String) -> Unit,
 ) {
     HomeSection(
         title = stringResource(R.string.list_of_medicine),
@@ -192,7 +198,8 @@ fun HomePage(
     HomeSection(
         title = stringResource(R.string.recent_search),
         uiState = recentSearchState,
-        navigateToDetail = navigateToDetail
+        navigateToDetail = navigateToDetail,
+        reverseLayout = true
     )
     // TODO section for favorite/bookmark medicine
 //    HomeSection(
@@ -208,6 +215,7 @@ fun HomeSection(
     uiState: UiState<List<MedicineEntity>>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit,
+    reverseLayout: Boolean = false,
 ) {
     Column(modifier) {
         Text(
@@ -224,7 +232,12 @@ fun HomeSection(
         ) {
             when (uiState) {
                 is UiState.Loading -> LoadingItem()
-                is UiState.Success -> MedicineRow(listMedicine = uiState.data, navigateToDetail = navigateToDetail)
+                is UiState.Success -> MedicineRow(
+                    listMedicine = uiState.data,
+                    navigateToDetail = navigateToDetail,
+                    reverseLayout = reverseLayout,
+                )
+
                 is UiState.Error -> ErrorScreen()
                 else -> ErrorScreen()
             }
@@ -238,12 +251,15 @@ fun MedicineRow(
     listMedicine: List<MedicineEntity>,
     modifier: Modifier = Modifier,
     navigateToDetail: (String) -> Unit,
+    reverseLayout: Boolean = false,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        items(listMedicine, key = { it.id }) { medicine ->
+        items(
+            if (reverseLayout) listMedicine.reversed() else listMedicine,
+            key = { it.id }) { medicine ->
             MedicineItem(
                 name = medicine.name,
                 types = medicine.type,
