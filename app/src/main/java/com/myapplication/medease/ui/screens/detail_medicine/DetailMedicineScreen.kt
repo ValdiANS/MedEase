@@ -83,13 +83,14 @@ fun DetailMedicineScreen(
                 LoadingItem()
                 detailScreenViewModel.getDetailMedicineById(medicineId)
             }
+
             is UiState.Success -> {
                 // TODO specify ingredients and medicine detail and also kids dose if null
                 DetailMedicineContent(
                     medicineName = uiState.data.nama,
                     medicineCategory = uiState.data.tipe.nama,
                     generalIndication = uiState.data.detailObat.indikasiUmum,
-                    medicineIngredients = "",
+                    medicineIngredients = uiState.data.detailObat.komposisi,
                     adultDose = uiState.data.detailObat.dewasa,
                     kidDose = uiState.data.detailObat.anak ?: "",
                     additionalThings = uiState.data.detailObat.perhatian,
@@ -99,8 +100,10 @@ fun DetailMedicineScreen(
                     medicineDetail = "",
                     onNavigateBack = onNavigateBack,
                     onSetSchedule = onSetSchedule,
-                    modifier = modifier)
+                    modifier = modifier
+                )
             }
+
             else -> ErrorScreen()
         }
     }
@@ -111,7 +114,7 @@ fun DetailMedicineContent(
     medicineName: String,
     medicineCategory: String,
     generalIndication: String,
-    medicineIngredients: String,
+    medicineIngredients: List<String>,
     adultDose: String,
     kidDose: String,
     additionalThings: String,
@@ -123,6 +126,16 @@ fun DetailMedicineContent(
     onSetSchedule: (medicineName: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val ingredients = StringBuilder()
+
+    medicineIngredients.forEachIndexed { index, s ->
+        if (index == medicineIngredients.size - 1) {
+            ingredients.append("${index + 1}. $s")
+        } else {
+            ingredients.append("${index + 1}. $s\n")
+        }
+
+    }
 
     Scaffold(
         modifier = modifier
@@ -212,6 +225,13 @@ fun DetailMedicineContent(
                     Spacer(Modifier.size(24.dp))
 
                     DetailMedicineContentSection(
+                        title = "Composition",
+                        content = ingredients.toString()
+                    )
+
+                    Spacer(Modifier.size(24.dp))
+
+                    DetailMedicineContentSection(
                         title = "Dose",
                         subContent = {
                             DetailMedicineContentSection(
@@ -295,7 +315,7 @@ fun DetailMedicineScreenPreview() {
             medicineName = "Panadol Merah",
             medicineCategory = "Obat Bebas (Hijau)",
             generalIndication = "Obat ini dapat digunakan untuk meringankan sakit kepala dan sakit gigi.",
-            medicineIngredients = "Tiap kaplet mengandung Paracetamol 500 mg dan Caffeine 65 mg.",
+            medicineIngredients = listOf("Tiap kaplet mengandung Paracetamol 500 mg dan Caffeine 65 mg."),
             adultDose = "1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
             kidDose = "Anak-anak usia lebih dari 12 tahun, 1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
             additionalThings = "Bila setelah 2 hari demam tidak menurun atau setelah 5 hari nyeri tidak menghilang, segera hubungi Unit Pelayanan Kesehatan. Kategori kehamilan : Kategori C: Mungkin berisiko. Selengkapnya bisa diakses melalui website Halodoc berikut.",
