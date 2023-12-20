@@ -38,11 +38,6 @@ class MedicineRepository(
     }
 
     fun uploadImage(file: MultipartBody.Part) : Flow<ObatData> = flow {
-//        try {
-//
-//        } catch (e: HttpException) {
-//            Log.e(TAG, "${e.message}")
-//        }
         val response = apiService.uploadImage(file)
         emit(response.data.obatData)
     }

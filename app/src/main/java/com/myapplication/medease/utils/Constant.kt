@@ -5,7 +5,6 @@ import java.util.concurrent.Executors
 const val NOTIFICATION_CHANNEL_NAME = "MedEase Schedule Channel"
 const val NOTIFICATION_CHANNEL_ID = "notify-schedule"
 const val NOTIFICATION_ID = 64
-//const val ID_REPEATING = 202
 
 private val SINGLE_EXECUTOR = Executors.newSingleThreadExecutor()
 

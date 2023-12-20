@@ -61,22 +61,6 @@ fun DetailMedicineScreen(
         factory = ViewModelFactory.getInstance(LocalContext.current)
     ),
 ) {
-    // Dummy
-//    DetailMedicineContent(
-//        medicineName = "Panadol Merah",
-//        medicineCategory = "Obat Bebas (Hijau)",
-//        generalIndication = "Obat ini dapat digunakan untuk meringankan sakit kepala dan sakit gigi.",
-//        medicineIngredients = "Tiap kaplet mengandung Paracetamol 500 mg dan Caffeine 65 mg.",
-//        adultDose = "1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
-//        kidDose = "Anak-anak usia lebih dari 12 tahun, 1 kaplet ditelan dengan segelas air, 3-4 kali sehari bila gejala memburuk, diminum sebelum atau sesudah makan. Tidak melebihi 8 kaplet dalam 24 jam. Minimum interval penggunaan dosis adalah 4 jam.",
-//        additionalThings = "Bila setelah 2 hari demam tidak menurun atau setelah 5 hari nyeri tidak menghilang, segera hubungi Unit Pelayanan Kesehatan. Kategori kehamilan : Kategori C: Mungkin berisiko. Selengkapnya bisa diakses melalui website Halodoc berikut.",
-//        contraindications = "Wanita hamil dan menyusui. Tidak dianjurkan untuk digunakan pada anak dibawah usia 12 tahun",
-//        medicineDosage = "750mg / capsules",
-//        medicineDetail = "Balsalazide is a 5-aminosalicylic acid (5-ASA) medication used to treat ulcerative colitis, a chronic inflammatory bowel disease (IBD) that affects the large intestine. It works by reducing inflammation in the colon. ",
-//        medicineSideEffect = "Reaksi efek samping jarang terjadi seperti  reaksi hipersensitifitas. Pemakaian obat umumnya memiliki efek samping tertentu dan sesuai dengan masing-masing individu. Jika terjadi efek samping yang berlebih dan berbahaya, hentikan penggunaan obat dan segera hubungi dokter. Selengkapnya bisa diakses melalui website Halodoc berikut.",
-//        onNavigateBack = onNavigateBack,
-//        modifier = modifier
-//    )
     detailScreenViewModel.medicineState.collectAsState(initial = UiState.Loading).value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
@@ -85,7 +69,6 @@ fun DetailMedicineScreen(
             }
 
             is UiState.Success -> {
-                // TODO specify ingredients and medicine detail and also kids dose if null
                 DetailMedicineContent(
                     medicineName = uiState.data.nama,
                     medicineCategory = uiState.data.tipe.nama,
