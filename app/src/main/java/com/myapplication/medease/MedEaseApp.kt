@@ -188,13 +188,3 @@ fun MedEaseApp(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun MedEaseAppPreview() {
-    MedEaseTheme {
-//        MedEaseApp(
-//            onLogout = {}
-//        )
-    }
-}
