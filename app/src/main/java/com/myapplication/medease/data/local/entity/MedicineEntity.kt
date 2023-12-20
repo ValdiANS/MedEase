@@ -23,7 +23,6 @@ data class MedicineEntity(
     val description: String
 )
 
-//data dummy
 data class MedicineItems(
     val id: String,
     val name: String,

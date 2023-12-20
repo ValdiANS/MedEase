@@ -201,12 +201,6 @@ fun HomePage(
         navigateToDetail = navigateToDetail,
         reverseLayout = true
     )
-    // TODO section for favorite/bookmark medicine
-//    HomeSection(
-//        title = stringResource(R.string.recent_medicine),
-//        uiState = allMedicineState,
-//        navigateToDetail = navigateToDetail
-//    )
 }
 
 @Composable
@@ -365,20 +359,4 @@ fun FABCamera(
             contentDescription = "Open Camera"
         )
     }
-}
-
-@Preview
-@Composable
-fun HomeContentPrev() {
-//    MedEaseTheme {
-//        HomeContent(
-//            username = "Bedul",
-//            query = "",
-//            listMedicine = dummyMedicineItems,
-//            onQueryChanged = {},
-//            onSearch = {},
-//            navigateToDetail = {},
-//            navigateToScan = {}
-//        )
-//    }
 }

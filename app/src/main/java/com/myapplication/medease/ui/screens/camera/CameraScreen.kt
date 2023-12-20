@@ -131,11 +131,7 @@ fun CameraScreen(
 
     var lastCapturedPhoto: Bitmap? by rememberSaveable { mutableStateOf(null) }
 
-    /*TODO("Send image to back-end")*/
     val photoCapturedHandler = { newPhoto: Bitmap ->
-//        val uri = getImageUriFromBitmap(context, newPhoto)
-//        Log.i("urifrombitmap", "uri: $uri")
-//        val file = uriToFile(uri, context).reduceFileImage()
         val file = bitmapToFile(context, newPhoto).reduceFileImage()
         val imageFile = file.asRequestBody("image/jpeg".toMediaType())
         val multipartBody = MultipartBody.Part.createFormData(
