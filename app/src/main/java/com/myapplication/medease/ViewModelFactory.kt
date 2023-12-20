@@ -9,6 +9,7 @@ import com.myapplication.medease.data.repository.ScheduleRepository
 import com.myapplication.medease.ui.screens.add_schedule.AddScheduleScreenViewModel
 import com.myapplication.medease.ui.screens.authentication.LoginFormViewModel
 import com.myapplication.medease.ui.screens.authentication.RegisterFormViewModel
+import com.myapplication.medease.ui.screens.camera.CameraViewModel
 import com.myapplication.medease.ui.screens.detail_medicine.DetailScreenViewModel
 import com.myapplication.medease.ui.screens.home.HomeViewModel
 import com.myapplication.medease.ui.screens.profile.ProfileScreenViewModel
@@ -46,6 +47,8 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(AddScheduleScreenViewModel::class.java) ->
                 AddScheduleScreenViewModel(scheduleRepository) as T
+            modelClass.isAssignableFrom(CameraViewModel::class.java) ->
+                CameraViewModel(medicineRepository) as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
