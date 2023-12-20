@@ -1,6 +1,7 @@
 package com.myapplication.medease
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
@@ -158,6 +159,10 @@ fun MedEaseApp(
                     },
                     onNavigateBack = {
                         navController.navigateUp()
+                    },
+                    navigateToDetail = { medicineId: String ->
+                        navController.popBackStack()
+                        navController.navigate(Screen.DetailMedicine.createRoute(medicineId))
                     }
                 )
             }

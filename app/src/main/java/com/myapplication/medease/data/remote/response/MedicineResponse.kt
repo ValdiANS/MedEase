@@ -41,7 +41,7 @@ data class DataItem(
 	val kapasitas: List<Float>,
 
 	@field:SerializedName("deskripsi")
-	val deskripsi: String?,
+	val deskripsi: String,
 
 	@field:SerializedName("tipe")
 	val tipe: Tipe

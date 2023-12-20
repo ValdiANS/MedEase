@@ -4,9 +4,11 @@ import android.util.Log
 import com.myapplication.medease.data.local.entity.MedicineEntity
 import com.myapplication.medease.data.local.room.MedicineDao
 import com.myapplication.medease.data.remote.response.DataItem
+import com.myapplication.medease.data.remote.response.ObatData
 import com.myapplication.medease.data.remote.retrofit.ApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MultipartBody
 import retrofit2.HttpException
 
 class MedicineRepository(
@@ -33,6 +35,16 @@ class MedicineRepository(
         } catch (e: Exception) {
             Log.e(TAG, "${e.message}")
         }
+    }
+
+    fun uploadImage(file: MultipartBody.Part) : Flow<ObatData> = flow {
+//        try {
+//
+//        } catch (e: HttpException) {
+//            Log.e(TAG, "${e.message}")
+//        }
+        val response = apiService.uploadImage(file)
+        emit(response.data.obatData)
     }
 
     companion object{

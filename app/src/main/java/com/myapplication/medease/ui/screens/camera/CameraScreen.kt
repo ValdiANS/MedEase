@@ -6,7 +6,9 @@ import android.net.Uri
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -14,7 +16,6 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +35,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,10 +51,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -67,47 +67,86 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.myapplication.medease.R
+import com.myapplication.medease.ViewModelFactory
+import com.myapplication.medease.data.remote.response.ObatData
+import com.myapplication.medease.ui.common.UiState
+import com.myapplication.medease.ui.components.LoadingItem
 import com.myapplication.medease.ui.theme.MedEaseTheme
 import com.myapplication.medease.ui.theme.montserratFamily
+import com.myapplication.medease.utils.Event
+import com.myapplication.medease.utils.bitmapToFile
+import com.myapplication.medease.utils.reduceFileImage
 import com.myapplication.medease.utils.rotateBitmap
+import com.myapplication.medease.utils.uriToFile
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreen(
     onPermissionDenied: () -> Unit,
     onNavigateBack: () -> Unit,
+    navigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: CameraViewModel = viewModel(
+        factory = ViewModelFactory.getInstance(LocalContext.current)
+    ),
 ) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    val uploadState by viewModel.uploadImageState.collectAsState()
+    val isUpload by viewModel.isUpload
 
     val cameraPermissionState: PermissionState =
         rememberPermissionState(android.Manifest.permission.CAMERA)
 
     val launcher = rememberLauncherForActivityResult(
         contract =
-        ActivityResultContracts.GetContent()
+        ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
-        imageUri = uri
-        Log.d("test123", uri.toString())
+        uri?.let {
+            val file = uriToFile(uri, context).reduceFileImage()
+            val imageFile = file.asRequestBody("image/jpeg".toMediaType())
+            val multipartBody = MultipartBody.Part.createFormData(
+                "image",
+                file.name,
+                imageFile
+            )
+            viewModel.uploadImage(
+                context,
+                multipartBody,
+                navigateBack = { onNavigateBack() }
+            )
+        }
+        Log.d("uri", uri.toString())
     }
 
     var lastCapturedPhoto: Bitmap? by rememberSaveable { mutableStateOf(null) }
 
     /*TODO("Send image to back-end")*/
     val photoCapturedHandler = { newPhoto: Bitmap ->
-        lastCapturedPhoto = newPhoto
+//        val uri = getImageUriFromBitmap(context, newPhoto)
+//        Log.i("urifrombitmap", "uri: $uri")
+//        val file = uriToFile(uri, context).reduceFileImage()
+        val file = bitmapToFile(context, newPhoto).reduceFileImage()
+        val imageFile = file.asRequestBody("image/jpeg".toMediaType())
+        val multipartBody = MultipartBody.Part.createFormData(
+            "image",
+            file.name,
+            imageFile
+        )
+        viewModel.uploadImage(context, multipartBody, navigateBack = { onNavigateBack() })
     }
 
-    /*TODO("Open gallery")*/
     val openGalleryHandler = {
-        launcher.launch("image/*")
+        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     CameraContent(
@@ -117,6 +156,9 @@ fun CameraScreen(
         onNavigateBack = onNavigateBack,
         onPhotoCaptured = photoCapturedHandler,
         onOpenGallery = openGalleryHandler,
+        uiState = uploadState,
+        isUpload = isUpload,
+        navigateToDetail = navigateToDetail,
 
         lastCapturedPhoto = lastCapturedPhoto,
 
@@ -127,6 +169,9 @@ fun CameraScreen(
 @Composable
 fun CameraContent(
     hasPermission: Boolean,
+    uiState: UiState<Event<ObatData>>,
+    isUpload: Boolean,
+    navigateToDetail: (String) -> Unit,
     onRequestPermission: () -> Unit,
     onPermissionDenied: () -> Unit,
     onNavigateBack: () -> Unit,
@@ -145,22 +190,21 @@ fun CameraContent(
             onNavigateBack = onNavigateBack,
             onPhotoCaptured = onPhotoCaptured,
             onOpenGallery = onOpenGallery,
+            uiState = uiState,
+            isUpload = isUpload,
+            navigateToDetail = navigateToDetail,
             modifier = modifier
         )
-
-        if (lastCapturedPhoto != null) {
-            LastPhotoPreview(
-                modifier = Modifier.align(alignment = Alignment.BottomStart),
-                lastCapturedPhoto = lastCapturedPhoto
-            )
-        }
     }
 }
 
 @Composable
 fun CameraContentGranted(
     hasPermission: Boolean,
+    uiState: UiState<Event<ObatData>>,
+    isUpload: Boolean,
     onRequestPermission: () -> Unit,
+    navigateToDetail: (String) -> Unit,
     onPermissionDenied: () -> Unit,
     onNavigateBack: () -> Unit,
     onPhotoCaptured: (Bitmap) -> Unit,
@@ -319,6 +363,30 @@ fun CameraContentGranted(
                 }
             }
         }
+        if (isUpload) {
+            when (uiState) {
+                is UiState.Loading -> {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        tonalElevation = 4.dp,
+                        color = Color.White.copy(alpha = 0.7f)
+                    ) {
+                        LoadingItem()
+                    }
+                }
+
+                is UiState.Success -> {
+                    uiState.data.getContentIfNotHandled()?.let {
+                        Toast.makeText(context, "scanning success", Toast.LENGTH_SHORT).show()
+                        navigateToDetail(it.id)
+                    }
+                }
+
+                else -> {
+                    onNavigateBack()
+                }
+            }
+        }
     }
 }
 
@@ -348,7 +416,8 @@ fun CameraScreenPreview() {
     MedEaseTheme {
         CameraScreen(
             onPermissionDenied = {},
-            onNavigateBack = {}
+            onNavigateBack = {},
+            navigateToDetail = {}
         )
     }
 }
@@ -359,7 +428,6 @@ private fun capturePhoto(
     onPhotoCaptured: (Bitmap) -> Unit,
 ) {
     val mainExecutor: Executor = ContextCompat.getMainExecutor(context)
-//    val mainExecutor: Executor = Executors.newSingleThreadExecutor()
 
     cameraController.takePicture(mainExecutor, object : ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(image: ImageProxy) {
@@ -375,30 +443,4 @@ private fun capturePhoto(
             Log.e("CameraContent", "Error capturing image", exception)
         }
     })
-}
-
-@Composable
-private fun LastPhotoPreview(
-    modifier: Modifier = Modifier,
-    lastCapturedPhoto: Bitmap,
-) {
-
-    val capturedPhoto: ImageBitmap =
-        remember(lastCapturedPhoto.hashCode()) { lastCapturedPhoto.asImageBitmap() }
-
-    Card(
-        modifier = modifier
-            .size(128.dp)
-            .padding(16.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
-        shape = MaterialTheme.shapes.large
-    ) {
-        Image(
-            bitmap = capturedPhoto,
-            contentDescription = "Last captured photo",
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop
-        )
-    }
 }
